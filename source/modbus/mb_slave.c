@@ -58,6 +58,7 @@ mb_return_t mb_slave_init(mb_slave_t* mb, uint8_t sl_addr, uint32_t speed)
 	mb_assert(mb->uart);
 	mb_assert(mb->timer);
 
+	mb_log_init();
 	mb_log("MODBUS init\n");
 	mb_log("Speed: %d\n", speed);
 
@@ -157,7 +158,7 @@ void mb_slave_handle(mb_slave_t *mb) {
 	}
 
 #ifdef MB_LOG
-	mb_log("MODBUS new frame: ");
+	mb_log("Request: ");
 	for(uint8_t i = 0; i < pdu->len; i++)
 	{
 		mb_log("%02x ", pdu->data[i]);
@@ -350,12 +351,14 @@ static void build_exc(mb_slave_t* mb, mb_pdu_t* pdu, uint8_t code)
 	pdu->data[MB_PDU_FUNC] = pdu->data[MB_PDU_FUNC] + 0x80;
 	pdu->data[2] = code;
 	pdu->len = 5;
+
+	mb_log("EXC code: %d\n", pdu->data[MB_PDU_FUNC]);
 }
 
 static void set_tx(mb_slave_t* mb, mb_pdu_t* pdu)
 {
 #ifdef MB_LOG
-	mb_log("Tramsit: ");
+	mb_log("Response: ");
 	for(uint16_t i = 0; i < pdu->len; i++)
 	{
 		mb_log("%02x ", pdu->data[i]);
@@ -368,7 +371,6 @@ static void set_tx(mb_slave_t* mb, mb_pdu_t* pdu)
 		tx_buf.head = (tx_buf.head + 1) % UART_TX_BUF_SIZE;
 		mb_assert(tx_buf.head != tx_buf.tail);
 	}
-
 	start_transmit(mb);
 }
 
