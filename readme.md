@@ -146,7 +146,7 @@ Edit file `data/mb_data_config.h` to change the limit register of data. Update t
 
 ### 2. Change timer clock source
 Edit file `mb_config.h` change the macro `MB_TIMER_CLOCK_SOURCE` the value as `Mhz`. In this project timer3 run with clock source `100Mhz`. Check MCU data sheet to change correct value. The value affect to the T3_5 of modbus frame packet detect
-```
+```c
 #ifndef MB_CONFIG_H_
 #define MB_CONFIG_H_
 
