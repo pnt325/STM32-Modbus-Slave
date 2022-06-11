@@ -95,6 +95,33 @@ int main(void)
   modbus.timer = &htim3;
 
   mb_slave_init(&modbus, 01, 115200);
+
+	// Update coil status
+	modbus.data.coil.set(&modbus.data.coil, 0, 1);
+	modbus.data.coil.set(&modbus.data.coil, 1, 0);
+	modbus.data.coil.set(&modbus.data.coil, 2, 1);
+	modbus.data.coil.set(&modbus.data.coil, 3, 0);
+	modbus.data.coil.set(&modbus.data.coil, 4, 1);
+
+	// Update input register
+	modbus.data.input.set(&modbus.data.input, 0, 0);
+	modbus.data.input.set(&modbus.data.input, 1, 1);
+	modbus.data.input.set(&modbus.data.input, 2, 0);
+	modbus.data.input.set(&modbus.data.input, 3, 1);
+	modbus.data.input.set(&modbus.data.input, 4, 0);
+
+	// Update input register
+	modbus.data.reg_input.set(&modbus.data.reg_input, 0, 1);
+	modbus.data.reg_input.set(&modbus.data.reg_input, 1, 2);
+	modbus.data.reg_input.set(&modbus.data.reg_input, 2, 3);
+	modbus.data.reg_input.set(&modbus.data.reg_input, 3, 4);
+
+	// Update holding register
+	modbus.data.reg_holding.set(&modbus.data.reg_holding, 0, 5);
+	modbus.data.reg_holding.set(&modbus.data.reg_holding, 1, 6);
+	modbus.data.reg_holding.set(&modbus.data.reg_holding, 2, 7);
+	modbus.data.reg_holding.set(&modbus.data.reg_holding, 3, 8);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
