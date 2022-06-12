@@ -176,7 +176,7 @@ void mb_slave_handle(mb_slave_t *mb) {
 		return;
 	}
 
-	// Handle function code
+	// Handle request
 	uint8_t err_code = valid_request(mb, pdu);
 	if (err_code) {
 		build_exc(mb, pdu, err_code);
@@ -192,6 +192,7 @@ void mb_slave_handle(mb_slave_t *mb) {
 	pdu->data[pdu->len - 1] = (uint8_t) (crc & 0x00FF);
 	set_tx(mb, pdu);
 
+	// Commit processed data
 	mb->buf.commit_get(&mb->buf);
 }
 
@@ -366,11 +367,13 @@ static void set_tx(mb_slave_t* mb, mb_pdu_t* pdu)
 	mb_log("\n");
 #endif
 
+	// Copy data to tx buffer
 	for (uint16_t i = 0; i < pdu->len; i++) {
 		tx_buf.data[tx_buf.head] = pdu->data[i];
 		tx_buf.head = (tx_buf.head + 1) % UART_TX_BUF_SIZE;
 		mb_assert(tx_buf.head != tx_buf.tail);
 	}
+
 	start_transmit(mb);
 }
 
