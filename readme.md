@@ -1,28 +1,41 @@
 # MODBUS Slave lib for STM32
 
-Lib folder: `source/modbus`
+Lib source folder: `source/modbus`
 
-## Configure for STM32Cube project: 
+## Configure for STM32 using CubeMX
 
 ### 1. Timer
-Choose the timer that support global interrupt and configure as bellow
+Configure timer clock source and enable global interrupt as bellow:
 
 ![](docs/image/cube_timer.png)
 
 ```
-Timer using internal clock source. Check data sheet to know what is clock source use for target timer. This value also use to configure on modbus lib
+NOTE: If using the internal clock should check clock source from datasheet,
+the value will be use configure for modbus lib
 ```
 
+![](docs/image/timer_clock_source.png)
+
+In this project use timer 3 with clock source from APB1
+
+
 ### 2. UART
-Choose UART and enable global interrupt. This modbus lib implement wiht slow speed refer max: 115200 bps. The UART data will be handle as interrupt and ring buffer.
+
+Choose UART and enable global interrupt as bellow:
 
 ![](docs/image/cube_uart.png)
+
+Note: The modbus lib implement the get data using interrupt and ring-buffer 
+it has limit of speed over UART to make sure it's working well the limit 
+of speed is `115200`
 
 ### 3. Copy modbus source from `source/modbus` to your project, like bellow:
 
 ![](docs/image/modbus_lib.png)
 
-Modbus lib use Segger RTT for log. Default it's enabled. If don't use this log can disable by edit file: `modbus/mb_log.h` and comment macro `MB_LOG`
+Modbus lib use Segger RTT for log. Default it's enabled. 
+
+If don't use this log can disable by edit file: `modbus/mb_log.h` and comment macro `MB_LOG`
 ```c
 #ifdef MB_DEBUG
 #define MB_LOG
@@ -42,7 +55,7 @@ If keep using the Segger RTT log need to edit include on project configure like 
 
 ![](docs/image/segger_rtt.png)
 
-### 4. Include hal using for target of STM32 MCU series
+### 4. Include HAL lib for taraget STM32
 
 Edit file `mb_stm32_include.h`, example project run on STM32F7, if you are using other MCU should edit for suitable
 ```c
@@ -144,7 +157,7 @@ Edit file `data/mb_data_config.h` to change the limit register of data. Update t
 #endif /* _MB_DATA_CONFIG_H_ */
 ```
 
-### 2. Change timer clock source
+### 2. Update timer clock source
 Edit file `mb_config.h` change the macro `MB_TIMER_CLOCK_SOURCE` the value as `Mhz`. In this project timer3 run with clock source `100Mhz`. Check MCU data sheet to change correct value. The value affect to the T3_5 of modbus frame packet detect
 ```c
 #ifndef MB_CONFIG_H_
@@ -169,7 +182,7 @@ Edit file `mb_config.h` change the macro `MB_TIMER_CLOCK_SOURCE` the value as `M
 
 ## Note
 
-The lib optimize for high performance working without delay and multiple modbus request handle limit 10 request. The request can increate depend on target of application. It's require more RAM. The limit can edit on file `mb_buffer.h` change value of macro `MB_BUFFER_SIZE`
+The lib optimize for high performance working without delay and multiple modbus request handle limit 10 request. The request can increase depend on target of application. It's require more RAM. The limit can edit on file `mb_buffer.h` change value of macro `MB_BUFFER_SIZE`
 
 ```c
 /* mb_buffer.h */
@@ -209,6 +222,13 @@ Test example, edit the value of register
 	modbus.data.reg_holding.set(&modbus.data.reg_holding, 3, 8);
 ```
 
-Read value from modbus master
+The result on modbus master:
 
 ![](docs/image/test_modbus.png)
+
+
+## Modbus and application arch
+
+Modbus and application work via the register, modbus read/write value to register then application write the value to ouput or update value/status from peripheral
+
+![](docs/image/modbus_arch.png)
