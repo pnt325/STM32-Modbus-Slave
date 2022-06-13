@@ -95,9 +95,9 @@ int main(void)
 
 	// Update coil status
 	bsp_mb_coil_set(0, 1);
-	bsp_mb_coil_set(0, 0);
-	bsp_mb_coil_set(0, 1);
-	bsp_mb_coil_set(0, 0);
+	bsp_mb_coil_set(1, 0);
+	bsp_mb_coil_set(2, 1);
+	bsp_mb_coil_set(3, 0);
 
 	// Update input register
 	bsp_mb_discrete_input_set(0, 0);
