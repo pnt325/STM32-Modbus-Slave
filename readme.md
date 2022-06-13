@@ -157,27 +157,19 @@ Edit file `data/mb_data_config.h` to change the limit register of data. Update t
 #endif /* _MB_DATA_CONFIG_H_ */
 ```
 
-### 2. Update timer clock source
-Edit file `mb_config.h` change the macro `MB_TIMER_CLOCK_SOURCE` the value as `Mhz`. In this project timer3 run with clock source `100Mhz`. Check MCU data sheet to change correct value. The value affect to the T3_5 of modbus frame packet detect
+### 2. MODBUS param
+Edit the macro value on `bsp_mb_slave.c`. UART speed like value use on `CubeMX` configure
 ```c
-#ifndef MB_CONFIG_H_
-#define MB_CONFIG_H_
-
-/* Number of MODBUS slave instance ============================*/
-#define MB_PDU_SIZE				256
-
-/* STM32 timer configure ======================================*/
-#define MB_TIMER_32_BIT			0xFFFFFFFF
-#define MB_TIMER_16_BIT			0xFFFF
-
-#define MB_TIMER_RESOLUTION		MB_TIMER_16_BIT				// TODO Configure it
-#define MB_TIMER_CLOCK_SOURCE	100	// Mhz					// TODO Configure it
-
-/* Debug configure ============================================*/
-#define MB_DEBUG
-
-#endif /* MB_CONFIG_H_ */
-
+/* macro ======================================================*/
+#define BSP_MB_SLAVE_ID				0x01
+#define BSP_MB_SLAVE_SPEED			115200	// bps
+#define BSP_MB_TIMER_CLOCK_SOURCE	100		// Mhz
+```
+Add `timer` and `uart` instance on file `bsp_slave.c`
+```c
+/* public variable ============================================*/
+extern UART_HandleTypeDef huart6;
+extern TIM_HandleTypeDef  htim3;
 ```
 
 ## Note
@@ -196,30 +188,28 @@ Check on `main.c`
 Test example, edit the value of register
 ```c
 	// Update coil status
-	modbus.data.coil.set(&modbus.data.coil, 0, 1);
-	modbus.data.coil.set(&modbus.data.coil, 1, 0);
-	modbus.data.coil.set(&modbus.data.coil, 2, 1);
-	modbus.data.coil.set(&modbus.data.coil, 3, 0);
-	modbus.data.coil.set(&modbus.data.coil, 4, 1);
+	bsp_mb_coil_set(0, 1);
+	bsp_mb_coil_set(0, 0);
+	bsp_mb_coil_set(0, 1);
+	bsp_mb_coil_set(0, 0);
 
 	// Update input register
-	modbus.data.input.set(&modbus.data.input, 0, 0);
-	modbus.data.input.set(&modbus.data.input, 1, 1);
-	modbus.data.input.set(&modbus.data.input, 2, 0);
-	modbus.data.input.set(&modbus.data.input, 3, 1);
-	modbus.data.input.set(&modbus.data.input, 4, 0);
+	bsp_mb_discrete_input_set(0, 0);
+	bsp_mb_discrete_input_set(0, 1);
+	bsp_mb_discrete_input_set(0, 0);
+	bsp_mb_discrete_input_set(0, 1);
 
 	// Update input register
-	modbus.data.reg_input.set(&modbus.data.reg_input, 0, 1);
-	modbus.data.reg_input.set(&modbus.data.reg_input, 1, 2);
-	modbus.data.reg_input.set(&modbus.data.reg_input, 2, 3);
-	modbus.data.reg_input.set(&modbus.data.reg_input, 3, 4);
+	bsp_mb_input_reg_set(0, 1);
+	bsp_mb_input_reg_set(1, 2);
+	bsp_mb_input_reg_set(2, 3);
+	bsp_mb_input_reg_set(3, 4);
 
 	// Update holding register
-	modbus.data.reg_holding.set(&modbus.data.reg_holding, 0, 5);
-	modbus.data.reg_holding.set(&modbus.data.reg_holding, 1, 6);
-	modbus.data.reg_holding.set(&modbus.data.reg_holding, 2, 7);
-	modbus.data.reg_holding.set(&modbus.data.reg_holding, 3, 8);
+	bsp_mb_holding_reg_set(0, 5);
+	bsp_mb_holding_reg_set(1, 6);
+	bsp_mb_holding_reg_set(2, 7);
+	bsp_mb_holding_reg_set(3, 8);
 ```
 
 The result on modbus master:
@@ -227,7 +217,7 @@ The result on modbus master:
 ![](docs/image/test_modbus.png)
 
 
-## Modbus and application arch
+## Modbus register and application usage
 
 Modbus and application work via the register, modbus read/write value to register then application write the value to ouput or update value/status from peripheral
 
