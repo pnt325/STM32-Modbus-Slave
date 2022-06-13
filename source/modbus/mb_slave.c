@@ -52,7 +52,7 @@ static uint8_t fc_write_single_reg(mb_slave_t* mb, mb_pdu_t* pdu);
 static uint8_t fc_write_multi_coil(mb_slave_t* mb, mb_pdu_t* pdu);
 static uint8_t fc_write_multi_reg(mb_slave_t* mb, mb_pdu_t* pdu);
 
-mb_return_t mb_slave_init(mb_slave_t* mb, uint8_t sl_addr, uint32_t speed)
+mb_return_t mb_slave_init(mb_slave_t* mb, uint8_t sl_addr, uint32_t speed, uint32_t timer_clk_mhz)
 {
 	mb_assert(mb);
 	mb_assert(mb->uart);
@@ -78,7 +78,7 @@ mb_return_t mb_slave_init(mb_slave_t* mb, uint8_t sl_addr, uint32_t speed)
 
 	// Timer configure
 	__HAL_TIM_CLEAR_IT(mb->timer, TIM_IT_UPDATE);						// Clear IRQ pending
-	__HAL_TIM_SET_PRESCALER(mb->timer, (MB_TIMER_CLOCK_SOURCE - 1));	// Set timer prescaler
+	__HAL_TIM_SET_PRESCALER(mb->timer, (timer_clk_mhz - 1));	// Set timer prescaler
 	set_timer_period(mb, speed);
 
 	mb->is_init = true;

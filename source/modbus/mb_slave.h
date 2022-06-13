@@ -45,9 +45,10 @@ typedef struct{
  *
  * @param	mb 		mb_slave_t
  * @param	sl_addr	Slave address
+ * @param   timer_clk_mhz Timer clock source MHZ
  * @return 	mb_return_t enum value
  */
-mb_return_t mb_slave_init(mb_slave_t* mb, uint8_t sl_addr, uint32_t speed);
+mb_return_t mb_slave_init(mb_slave_t* mb, uint8_t sl_addr, uint32_t speed, uint32_t timer_clk_mhz);
 
 /**
  * @brief De-Initialize
