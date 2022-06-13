@@ -24,7 +24,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "../../modbus/mb_slave.h"
+#include "../../modbus/bsp_mb_slave.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,7 +44,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static mb_slave_t modbus;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -91,36 +91,31 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
-  modbus.uart = &huart6;
-  modbus.timer = &htim3;
-
-  mb_slave_init(&modbus, 01, 115200);
+	bsp_mb_slave_init();
 
 	// Update coil status
-	modbus.data.coil.set(&modbus.data.coil, 0, 1);
-	modbus.data.coil.set(&modbus.data.coil, 1, 0);
-	modbus.data.coil.set(&modbus.data.coil, 2, 1);
-	modbus.data.coil.set(&modbus.data.coil, 3, 0);
-	modbus.data.coil.set(&modbus.data.coil, 4, 1);
+	bsp_mb_coil_set(0, 1);
+	bsp_mb_coil_set(0, 0);
+	bsp_mb_coil_set(0, 1);
+	bsp_mb_coil_set(0, 0);
 
 	// Update input register
-	modbus.data.input.set(&modbus.data.input, 0, 0);
-	modbus.data.input.set(&modbus.data.input, 1, 1);
-	modbus.data.input.set(&modbus.data.input, 2, 0);
-	modbus.data.input.set(&modbus.data.input, 3, 1);
-	modbus.data.input.set(&modbus.data.input, 4, 0);
+	bsp_mb_discrete_input_set(0, 0);
+	bsp_mb_discrete_input_set(0, 1);
+	bsp_mb_discrete_input_set(0, 0);
+	bsp_mb_discrete_input_set(0, 1);
 
 	// Update input register
-	modbus.data.reg_input.set(&modbus.data.reg_input, 0, 1);
-	modbus.data.reg_input.set(&modbus.data.reg_input, 1, 2);
-	modbus.data.reg_input.set(&modbus.data.reg_input, 2, 3);
-	modbus.data.reg_input.set(&modbus.data.reg_input, 3, 4);
+	bsp_mb_input_reg_set(0, 1);
+	bsp_mb_input_reg_set(1, 2);
+	bsp_mb_input_reg_set(2, 3);
+	bsp_mb_input_reg_set(3, 4);
 
 	// Update holding register
-	modbus.data.reg_holding.set(&modbus.data.reg_holding, 0, 5);
-	modbus.data.reg_holding.set(&modbus.data.reg_holding, 1, 6);
-	modbus.data.reg_holding.set(&modbus.data.reg_holding, 2, 7);
-	modbus.data.reg_holding.set(&modbus.data.reg_holding, 3, 8);
+	bsp_mb_holding_reg_set(0, 5);
+	bsp_mb_holding_reg_set(1, 6);
+	bsp_mb_holding_reg_set(2, 7);
+	bsp_mb_holding_reg_set(3, 8);
 
   /* USER CODE END 2 */
 
@@ -128,7 +123,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  mb_slave_handle(&modbus);
+	  bsp_mb_slave_handle();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
