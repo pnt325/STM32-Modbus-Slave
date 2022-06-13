@@ -12,7 +12,7 @@
 #include "../mb_assert.h"
 
 static uint8_t  coil_db[MB_COIL_NUM/8];
-static uint8_t  input_db[MB_COIL_NUM/8];
+static uint8_t  input_db[MB_INPUT_NUM/8];
 static uint16_t reg_input_db[MB_REG_INPUT_NUM];
 static uint16_t reg_holding_db[MB_REG_HOLDING_NUM];
 
@@ -26,7 +26,7 @@ void mb_data_init(mb_data_t* mb_data)
 	memset(reg_holding_db, 0, sizeof(reg_holding_db));
 
 	mb_data_bit_init(&mb_data->coil       , coil_db       , MB_COIL_NUM);
-	mb_data_bit_init(&mb_data->input      , input_db      , MB_COIL_NUM);
+	mb_data_bit_init(&mb_data->input      , input_db      , MB_INPUT_NUM);
 	mb_data_reg_init(&mb_data->reg_input  , reg_input_db  , MB_REG_INPUT_NUM);
 	mb_data_reg_init(&mb_data->reg_holding, reg_holding_db, MB_REG_HOLDING_NUM);
 }
