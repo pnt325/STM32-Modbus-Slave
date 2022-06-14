@@ -216,7 +216,7 @@ Test example, edit the value of register
 	bsp_mb_holding_reg_set(3, 8);
 ```
 
-The result on modbus master:
+Test on modbus master [modbus poll](https://www.modbustools.com/download.html)
 
 ![](docs/image/test_modbus.png)
 
