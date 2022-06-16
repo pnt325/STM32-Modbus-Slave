@@ -4,7 +4,7 @@ Lib write follow standard `MODBUS APPLICATION PROTOCOL SPECIFICATION
 V1.1b3` publish by [modbus.org](https://modbus.org/). Download [Modbus_Application_Protocol_V1_1b3.pdf](https://modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf) or 
 [doc](docs/Modbus_Application_Protocol_V1_1b3.pdf)
 
-Lib source path: `source/modbus_lib/modbus`
+Lib source path: `source/modbus`
 
 ## Configure for STM32 using CubeMX
 
