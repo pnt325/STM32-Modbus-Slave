@@ -14,16 +14,20 @@
 #define BSP_MB_SLAVE_SPEED			115200	// bps
 #define BSP_MB_TIMER_CLOCK_SOURCE	100		// Mhz
 
+/* UART and TIMER instance */
+#define uart_instance 		huart6
+#define timer_instance		htim3
+
 /* private variable ===========================================*/
 static mb_slave_t __mb;
 
 /* public variable ============================================*/
-extern UART_HandleTypeDef huart6;
-extern TIM_HandleTypeDef htim3;
+extern UART_HandleTypeDef uart_instance;
+extern TIM_HandleTypeDef timer_instance;
 
 void bsp_mb_slave_init(void) {
-	__mb.uart = &huart6;
-	__mb.timer = &htim3;
+	__mb.uart = &uart_instance;
+	__mb.timer = &timer_instance;
 	mb_slave_init(&__mb, BSP_MB_SLAVE_ID, BSP_MB_SLAVE_SPEED, BSP_MB_TIMER_CLOCK_SOURCE);
 }
 
