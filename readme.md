@@ -169,11 +169,17 @@ Edit the macro value on `bsp_mb_slave.c`. UART speed like value use on `CubeMX` 
 #define BSP_MB_SLAVE_SPEED			115200	// bps
 #define BSP_MB_TIMER_CLOCK_SOURCE	100		// Mhz
 ```
-Add `timer` and `uart` instance on file `bsp_slave.c`
+Edit `timer` and `uart` instance on `bsp_slave.c`
 ```c
 /* public variable ============================================*/
 extern UART_HandleTypeDef huart6;
-extern TIM_HandleTypeDef  htim3;
+extern TIM_HandleTypeDef htim3;
+
+void bsp_mb_slave_init(void) {
+	__mb.uart = &huart6;
+	__mb.timer = &htim3;
+	mb_slave_init(&__mb, BSP_MB_SLAVE_ID, BSP_MB_SLAVE_SPEED, BSP_MB_TIMER_CLOCK_SOURCE);
+}
 ```
 
 ## Note
