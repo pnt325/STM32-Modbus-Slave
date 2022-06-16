@@ -27,7 +27,6 @@ struct tx_buf_s{
 
 /* variable ===================================================*/
  const uint8_t mb_support_fc[] = MB_FC_SUPORT_DEFAULT;
- static mb_slave_t* mb_slave;
 
  // UART TX
  static volatile uint16_t tx_len;
@@ -82,7 +81,6 @@ mb_return_t mb_slave_init(mb_slave_t* mb, uint8_t sl_addr, uint32_t speed, uint3
 	set_timer_period(mb, speed);
 
 	mb->is_init = true;
-	mb_slave = mb;
 
 	tx_buf.tail = 0;
 	tx_buf.head = 0;
@@ -100,7 +98,6 @@ mb_return_t mb_slave_deinit(mb_slave_t* mb)
 	if (mb->is_init) {
 		mb_log("MODBUS deinit\n");
 		mb->is_init = false;
-		mb_slave = NULL;
 
 		// Stop timer
 		HAL_TIM_Base_Stop_IT(mb->timer);
@@ -194,6 +191,46 @@ void mb_slave_handle(mb_slave_t *mb) {
 
 	// Commit processed data
 	mb->buf.commit_get(&mb->buf);
+}
+
+void _mb_slave_tx_irq(mb_slave_t* mb)
+{
+	mb_assert(mb);
+	tx_buf.tail = (tx_buf.tail + tx_len) % UART_TX_BUF_SIZE;
+	start_transmit(mb);
+}
+
+void _mb_slave_rx_irq(mb_slave_t* mb)
+{
+	mb->uart_buf.add(&mb->uart_buf, mb->uart_rx);
+
+	// Restart timer
+	__HAL_TIM_SET_COUNTER(mb->timer, 0);
+	HAL_TIM_Base_Start_IT(mb->timer);
+	HAL_UART_Receive_IT(mb->uart, &mb->uart_rx, 1);
+}
+
+void _mb_slave_timer_irq(mb_slave_t* mb)
+{
+	// Stop receive UART
+	HAL_UART_AbortReceive_IT(mb->uart);
+	HAL_TIM_Base_Stop_IT(mb->timer);
+
+	// Copy data from buffer to MODBUS packet
+	if(mb->uart_buf.overflow)
+	{
+		mb->uart_buf.flush(&mb->uart_buf);
+	}
+	else
+	{
+		mb_pdu_t *pdu = mb->buf.next(&mb->buf);
+		pdu->len = MB_PDU_SIZE;
+		mb->uart_buf.get_data(&mb->uart_buf, pdu->data, &pdu->len);
+		mb->buf.commit_next(&mb->buf);
+	}
+
+	// Start receive UART
+	HAL_UART_Receive_IT(mb->uart, &mb->uart_rx, 1);
 }
 
 static uint32_t get_t35(uint32_t speed) {
@@ -736,66 +773,3 @@ static uint8_t fc_write_multi_reg(mb_slave_t* mb, mb_pdu_t* pdu)
 	return 0;
 }
 
-
-/* STM32 interrupt callback ===================================*/
-/**
-  * @brief  Period elapsed callback in non-blocking mode
-  * @param  htim TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-	if (mb_slave && mb_slave->timer == htim) {
-		// Stop receive UART
-		HAL_UART_AbortReceive_IT(mb_slave->uart);
-		HAL_TIM_Base_Stop_IT(mb_slave->timer);
-
-		// Copy data from buffer to MODBUS packet
-		if(mb_slave->uart_buf.overflow)
-		{
-			mb_slave->uart_buf.flush(&mb_slave->uart_buf);
-		}
-		else
-		{
-			mb_pdu_t *pdu = mb_slave->buf.next(&mb_slave->buf);
-			pdu->len = MB_PDU_SIZE;
-			mb_slave->uart_buf.get_data(&mb_slave->uart_buf, pdu->data, &pdu->len);
-			mb_slave->buf.commit_next(&mb_slave->buf);
-		}
-
-		// Start receive UART
-		HAL_UART_Receive_IT(mb_slave->uart, &mb_slave->uart_rx, 1);
-	}
-}
-
-/**
-  * @brief  Rx Transfer completed callback.
-  * @param  huart UART handle.
-  * @retval None
-  */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	if(mb_slave && mb_slave->uart == huart)
-	{
-		mb_slave->uart_buf.add(&mb_slave->uart_buf, mb_slave->uart_rx);
-
-		// Restart timer
-		__HAL_TIM_SET_COUNTER(mb_slave->timer, 0);
-		HAL_TIM_Base_Start_IT(mb_slave->timer);
-		HAL_UART_Receive_IT(huart, &mb_slave->uart_rx, 1);
-	}
-}
-
-/**
-  * @brief Tx Transfer completed callback.
-  * @param huart UART handle.
-  * @retval None
-  */
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
-{
-	if(mb_slave && mb_slave->uart == huart)
-	{
-		tx_buf.tail = (tx_buf.tail + tx_len) % UART_TX_BUF_SIZE;
-		start_transmit(mb_slave);
-	}
-}

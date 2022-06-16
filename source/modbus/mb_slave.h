@@ -65,5 +65,9 @@ mb_return_t mb_slave_deinit(mb_slave_t* mb);
  */
 void        mb_slave_handle(mb_slave_t* mb);
 
+void _mb_slave_tx_irq(mb_slave_t* mb);
+void _mb_slave_rx_irq(mb_slave_t* mb);
+void _mb_slave_timer_irq(mb_slave_t* mb);
+
 
 #endif /* MB_SLAVE_H_ */
