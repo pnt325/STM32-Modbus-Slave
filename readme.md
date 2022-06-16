@@ -76,72 +76,8 @@ Edit file `mb_stm32_include.h`, example project run on STM32F7, if you are using
 
 ### 5. Note:
 
-Modbus lib already implement the UART and Timer callback handle on `mb_slave.c`. Do not implement the interrupt callback other place to avoid error while compile
+Modbus lib already implement the UART and Timer callback handle on `bsp_mb_slave.c`. Do not implement the interrupt callback other place to avoid error while compile
 
-```C
-/* STM32 interrupt callback ===================================*/
-/**
-  * @brief  Period elapsed callback in non-blocking mode
-  * @param  htim TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-	if (mb_slave && mb_slave->timer == htim) {
-		// Stop receive UART
-		HAL_UART_AbortReceive_IT(mb_slave->uart);
-		HAL_TIM_Base_Stop_IT(mb_slave->timer);
-
-		// Copy data from buffer to MODBUS packet
-		if(mb_slave->uart_buf.overflow)
-		{
-			mb_slave->uart_buf.flush(&mb_slave->uart_buf);
-		}
-		else
-		{
-			mb_pdu_t *pdu = mb_slave->buf.next(&mb_slave->buf);
-			pdu->len = MB_PDU_SIZE;
-			mb_slave->uart_buf.get_data(&mb_slave->uart_buf, pdu->data, &pdu->len);
-			mb_slave->buf.commit_next(&mb_slave->buf);
-		}
-
-		// Start receive UART
-		HAL_UART_Receive_IT(mb_slave->uart, &mb_slave->uart_rx, 1);
-	}
-}
-
-/**
-  * @brief  Rx Transfer completed callback.
-  * @param  huart UART handle.
-  * @retval None
-  */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	if(mb_slave && mb_slave->uart == huart)
-	{
-		mb_slave->uart_buf.add(&mb_slave->uart_buf, mb_slave->uart_rx);
-
-		// Restart timer
-		__HAL_TIM_SET_COUNTER(mb_slave->timer, 0);
-		HAL_TIM_Base_Start_IT(mb_slave->timer);
-		HAL_UART_Receive_IT(huart, &mb_slave->uart_rx, 1);
-	}
-}
-
-/**
-  * @brief Tx Transfer completed callback.
-  * @param huart UART handle.
-  * @retval None
-  */
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
-{
-	if(mb_slave && mb_slave->uart == huart)
-	{
-		tx_buf.tail = (tx_buf.tail + tx_len) % UART_TX_BUF_SIZE;
-		start_transmit(mb_slave);
-	}
-}
-```
 
 ## Configure modbus lib
 
@@ -171,15 +107,9 @@ Edit the macro value on `bsp_mb_slave.c`. UART speed like value use on `CubeMX` 
 ```
 Edit `timer` and `uart` instance on `bsp_slave.c`
 ```c
-/* public variable ============================================*/
-extern UART_HandleTypeDef huart6;
-extern TIM_HandleTypeDef htim3;
-
-void bsp_mb_slave_init(void) {
-	__mb.uart = &huart6;
-	__mb.timer = &htim3;
-	mb_slave_init(&__mb, BSP_MB_SLAVE_ID, BSP_MB_SLAVE_SPEED, BSP_MB_TIMER_CLOCK_SOURCE);
-}
+/* UART and TIMER instance */
+#define uart_instance 		huart6
+#define timer_instance		htim3
 ```
 
 ## Note
