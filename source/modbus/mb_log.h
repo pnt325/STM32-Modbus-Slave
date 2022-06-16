@@ -20,7 +20,7 @@
 #define mb_log(_c, ...)		SEGGER_RTT_printf(0, _c, ##__VA_ARGS__);
 #else
 #define mb_log_init()
-#define mb_log()
+#define mb_log(_c, ...)
 #endif
 
 #endif /* MB_LOG_H_ */

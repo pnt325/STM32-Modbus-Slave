@@ -8,7 +8,7 @@
 #ifndef MB_CONFIG_H_
 #define MB_CONFIG_H_
 
-/* Number of MODBUS slave instance ============================*/
+/* Modbus protocol data unit ==================================*/
 #define MB_PDU_SIZE	256
 
 /* Debug configure ============================================*/
