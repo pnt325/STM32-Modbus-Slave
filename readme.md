@@ -232,3 +232,9 @@ Test on modbus master [modbus poll](https://www.modbustools.com/download.html)
 Modbus and application work via the register, modbus read/write value to register then application write the value to ouput or update value/status from peripheral
 
 ![](docs/image/modbus_arch.png)
+
+## Tools
+
+1. [qModbus Master](https://sourceforge.net/projects/qmodmaster/), Or [Tools/qModMaster-Win64-exe-0.5.3-beta.zip](tools/qModMaster-Win64-exe-0.5.3-beta.zip)
+
+2. [Modbus poll](https://www.modbustools.com/download.html)
