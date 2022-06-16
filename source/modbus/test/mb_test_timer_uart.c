@@ -24,7 +24,7 @@ static uint8_t recv_buf[1];
 
 void mb_test_timer_uart(void)
 {
-	mb_log_init();
+//	mb_log_init();
 	HAL_UART_Receive_IT(&huart6, recv_buf, 1);
 	__HAL_TIM_CLEAR_IT(&htim3, TIM_IT_UPDATE);
 }

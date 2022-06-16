@@ -5,7 +5,8 @@
  *      Author: phatn
  */
 
-#include "stm32f746xx.h"
+#include "mb_assert.h"
+#include "mb_stm32_include.h"
 
 void __mb_failure(void)
 {
