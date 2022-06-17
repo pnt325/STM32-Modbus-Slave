@@ -4,7 +4,7 @@ Lib write follow standard `MODBUS APPLICATION PROTOCOL SPECIFICATION
 V1.1b3` publish by [modbus.org](https://modbus.org/). Download [Modbus_Application_Protocol_V1_1b3.pdf](https://modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf) or 
 [doc](docs/Modbus_Application_Protocol_V1_1b3.pdf)
 
-Lib source path: `source/modbus`
+Lib source path: `lib`
 
 ## Configure for STM32 using CubeMX
 
@@ -33,13 +33,13 @@ Note: The modbus lib implement the get data using interrupt and ring-buffer
 it has limit of speed over UART to make sure it's working well the limit 
 of speed is `115200`
 
-### 3. Copy modbus source from `source/modbus` to your project, like bellow:
+### 3. Copy modbus source from `lib` to your project, like bellow:
 
 ![](docs/image/modbus_lib.png)
 
 Modbus lib use Segger RTT for log. Default it's enabled. 
 
-If don't use this log can disable by edit file: `modbus/mb_log.h` and comment macro `MB_LOG`
+If don't use this log can disable by edit file: `lib/mb_log.h` and comment macro `MB_LOG`
 ```c
 #ifdef MB_DEBUG
 #define MB_LOG
@@ -61,7 +61,7 @@ If keep using the Segger RTT log need to edit include on project configure like 
 
 ### 4. Include HAL lib for taraget STM32
 
-Edit file `mb_stm32_include.h`, example project run on STM32F7, if you are using other MCU should edit for suitable
+Edit file `lib/mb_stm32_include.h`, example project run on STM32F7, if you are using other MCU should edit for suitable
 ```c
 #ifndef MB_STM32_INCLUDE_H_
 #define MB_STM32_INCLUDE_H_
@@ -83,7 +83,7 @@ Modbus lib already implement the UART and Timer callback handle on `bsp_mb_slave
 
 ### 1. Modbus data register
 
-Edit file `data/mb_data_config.h` to change the limit register of data. Update the value of macro bellow:
+Edit file `lib/data/mb_data_config.h` to change the limit register of data. Update the value of macro bellow:
 
 ```c
 #ifndef _MB_DATA_CONFIG_H_
@@ -98,7 +98,7 @@ Edit file `data/mb_data_config.h` to change the limit register of data. Update t
 ```
 
 ### 2. MODBUS param
-Edit the macro value on `bsp_mb_slave.c`. UART speed like value use on `CubeMX` configure
+Edit the macro value on `lib/bsp_mb_slave.c`. UART speed like value use on `CubeMX` configure
 ```c
 /* macro ======================================================*/
 #define BSP_MB_SLAVE_ID				0x01
@@ -114,7 +114,7 @@ Edit `timer` and `uart` instance on `bsp_slave.c`
 
 ## Note
 
-The lib optimize for high performance working without delay and multiple modbus request handle limit 10 request. The request can increase depend on target of application. It's require more RAM. The limit can edit on file `mb_buffer.h` change value of macro `MB_BUFFER_SIZE`
+The lib optimize for high performance working without delay and multiple modbus request handle limit 10 request. The request can increase depend on target of application. It's require more RAM. The limit can edit on file `lib/mb_buffer.h` change value of macro `MB_BUFFER_SIZE`
 
 ```c
 /* mb_buffer.h */
