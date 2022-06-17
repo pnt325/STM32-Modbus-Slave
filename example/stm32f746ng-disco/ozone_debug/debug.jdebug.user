@@ -1,0 +1,20 @@
+
+OpenDocument="mb_data_reg.c", FilePath="C:/Users/phatn/Documents/git_repo/stm32_mb_slave/source/modbus/data/mb_data_reg.c", Line=0
+OpenDocument="main.c", FilePath="C:/Users/phatn/Documents/git_repo/stm32_mb_slave/source/Core/Src/main.c", Line=59
+OpenDocument="mb_crc.c", FilePath="C:/Users/phatn/Documents/git_repo/stm32_mb_slave/source/modbus/mb_crc.c", Line=4
+OpenDocument="mb_slave.c", FilePath="C:/Users/phatn/Documents/git_repo/stm32_mb_slave/source/modbus/mb_slave.c", Line=681
+OpenDocument="ring_buffer.c", FilePath="C:/Users/phatn/Documents/git_repo/stm32_mb_slave/source/modbus/ring_buffer.c", Line=9
+OpenDocument="startup_stm32f746nghx.s", FilePath="C:/Users/phatn/Documents/git_repo/stm32_mb_slave/source/Core/Startup/startup_stm32f746nghx.s", Line=53
+OpenDocument="mb_data_bit.c", FilePath="C:/Users/phatn/Documents/git_repo/stm32_mb_slave/source/modbus/data/mb_data_bit.c", Line=19
+OpenToolbar="Debug", Floating=0, x=0, y=0
+OpenWindow="Call Stack", DockArea=RIGHT, x=0, y=1, w=313, h=270, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Memory 1", DockArea=BOTTOM, x=1, y=0, w=778, h=315, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, EditorAddress=0x2A0
+OpenWindow="Local Data", DockArea=RIGHT, x=0, y=0, w=313, h=260, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=148, h=531, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Console", DockArea=BOTTOM, x=0, y=0, w=579, h=315, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+TableHeader="Local Data", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Location";"Size";"Type";"Scope"], ColWidths=[151;161;100;100;100;100]
+TableHeader="Functions", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Source"], ColWidths=[1782;100;100;100;194]
+TableHeader="Call Stack", SortCol="Function", SortOrder="ASCENDING", VisibleCols=["Function";"Stack Frame";"Source";"PC";"Return Address";"Stack Used"], ColWidths=[195;119;110;100;168;100]
+TableHeader="Power Sampling", SortCol="Index", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Ch 0"], ColWidths=[100;100;100]
+TableHeader="RegisterSelectionDialog", SortCol="None", SortOrder="ASCENDING", VisibleCols=[], ColWidths=[]
+TableHeader="TargetExceptionDialog", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Address";"Description"], ColWidths=[200;100;100;359]
