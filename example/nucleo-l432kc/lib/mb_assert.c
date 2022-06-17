@@ -5,8 +5,9 @@
  *      Author: phatn
  */
 
-#include "mb_assert.h"
-#include "mb_stm32_include.h"
+#include "../lib/mb_assert.h"
+
+#include "../lib/mb_stm32_include.h"
 
 void __mb_failure(void)
 {

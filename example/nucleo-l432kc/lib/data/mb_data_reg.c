@@ -5,9 +5,10 @@
  *      Author: phatn
  */
 
-#include "mb_data_reg.h"
-#include "../mb_log.h"
-#include "../mb_assert.h"
+#include "../../lib/data/mb_data_reg.h"
+
+#include "../../lib/mb_assert.h"
+#include "../../lib/mb_log.h"
 
 static void     _reg_set(mb_data_reg_t* reg, uint16_t addr, uint16_t value);
 static uint16_t _reg_get(mb_data_reg_t* reg, uint16_t addr);

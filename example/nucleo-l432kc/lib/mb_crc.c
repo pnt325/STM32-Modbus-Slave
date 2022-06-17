@@ -5,7 +5,7 @@
  *      Author: phatn
  */
 
-#include "mb_crc.h"
+#include "../lib/mb_crc.h"
 
 uint16_t mb_crc_calc(uint8_t* data, uint16_t len)
 {

@@ -5,15 +5,16 @@
  *      Author: phatn
  */
 
+#include "../lib/mb_slave.h"
+
 #include <string.h>
 #include <stdio.h>
 
-#include "mb_slave.h"
-#include "mb_config.h"
-#include "mb_assert.h"
-#include "mb_log.h"
-#include "mb_defs.h"
-#include "mb_crc.h"
+#include "../lib/mb_assert.h"
+#include "../lib/mb_config.h"
+#include "../lib/mb_crc.h"
+#include "../lib/mb_defs.h"
+#include "../lib/mb_log.h"
 
 /* macro ======================================================*/
 #define UART_TX_BUF_SIZE		384

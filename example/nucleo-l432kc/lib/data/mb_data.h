@@ -9,8 +9,9 @@
 #define _MB_DATA_H_
 
 #include <stdint.h>
-#include "mb_data_bit.h"
-#include "mb_data_reg.h"
+
+#include "../../lib/data/mb_data_bit.h"
+#include "../../lib/data/mb_data_reg.h"
 
 typedef struct mb_data_s
 {

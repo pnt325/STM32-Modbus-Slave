@@ -6,8 +6,9 @@
  */
 
 /* include ====================================================*/
-#include "bsp_mb_slave.h"
-#include "mb_slave.h"
+#include "../lib/bsp_mb_slave.h"
+
+#include "../lib/mb_slave.h"
 
 /* macro ======================================================*/
 #define BSP_MB_SLAVE_ID				0x01

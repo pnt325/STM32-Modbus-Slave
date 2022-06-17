@@ -9,7 +9,8 @@
 #define MB_BUFFER_H_
 
 #include <stdint.h>
-#include "mb_config.h"
+
+#include "../lib/mb_config.h"
 
 #define MB_BUFFER_SIZE			10
 

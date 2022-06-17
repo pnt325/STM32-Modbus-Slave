@@ -11,10 +11,11 @@
 /* include ====================================================*/
 #include <stdint.h>
 #include <stdbool.h>
-#include "mb_stm32_include.h"
-#include "ring_buffer.h"
-#include "mb_buffer.h"
-#include "data/mb_data.h"
+
+#include "../lib/data/mb_data.h"
+#include "../lib/mb_buffer.h"
+#include "../lib/mb_stm32_include.h"
+#include "../lib/ring_buffer.h"
 
 /* macro ======================================================*/
 

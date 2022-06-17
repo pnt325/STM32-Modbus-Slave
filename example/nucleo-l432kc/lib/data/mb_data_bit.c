@@ -5,9 +5,10 @@
  *      Author: phatn
  */
 
-#include "mb_data_bit.h"
-#include "../mb_log.h"
-#include "../mb_assert.h"
+#include "../../lib/data/mb_data_bit.h"
+
+#include "../../lib/mb_assert.h"
+#include "../../lib/mb_log.h"
 
 uint8_t _get_bit(mb_data_bit_t *bit, uint16_t addr);
 void _set_bit(mb_data_bit_t *bit, uint16_t addr, uint8_t status);

@@ -1,3 +1,4 @@
+
 /*********************************************************************
 *                    SEGGER Microcontroller GmbH                     *
 *                        The Embedded Experts                        *
@@ -57,7 +58,7 @@ Revision: $Rev: 20755 $
 #if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM) && !(defined __ARMCC_VERSION) && !(defined __CC_ARM)
 
 #include <reent.h>  // required for _write_r
-#include "SEGGER_RTT.h"
+#include "../../../../lib/utils/SEGGER_RTT/RTT/SEGGER_RTT.h"
 
 
 /*********************************************************************

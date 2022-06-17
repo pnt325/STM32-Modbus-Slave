@@ -5,11 +5,13 @@
  *      Author: phatn
  */
 
+#include "../../lib/data/mb_data.h"
+
 #include <string.h>
-#include "mb_data.h"
-#include "mb_data_config.h"
-#include "../mb_log.h"
-#include "../mb_assert.h"
+
+#include "../../lib/data/mb_data_config.h"
+#include "../../lib/mb_assert.h"
+#include "../../lib/mb_log.h"
 
 static uint8_t  coil_db[MB_COIL_NUM/8];
 static uint8_t  input_db[MB_INPUT_NUM/8];
