@@ -103,30 +103,21 @@ mb_return_t mb_slave_deinit(mb_slave_t* mb)
 		HAL_TIM_Base_Stop_IT(mb->timer);
 
 		// Stop UART
-		HAL_UART_Abort_IT(mb->uart);
+		HAL_UART_AbortReceive_IT(mb->uart);
+		HAL_UART_AbortTransmit_IT(mb->uart);
 
+		// Clear buffer
 		mb->buf.flush(&mb->buf);
 		mb->uart_buf.flush(&mb->uart_buf);
+
+		// Reset transmit buffer
+		tx_buf.tail = 0;
+		tx_buf.head = 0;
+		tx_len = 0;
 	}
 
 	return MB_SUCCESS;
 }
-
-//mb_return_t mb_slave_set_speed(mb_slave_t *mb,uint32_t speed)
-//{
-//	mb_assert(mb);
-//	if(mb->is_init == false) {
-//		mb_log("MODBUS error: is not initialize\n");
-//		return MB_FAILURE;
-//	}
-//
-//	HAL_TIM_Base_Stop_IT(mb->timer);
-//	HAL_UART_AbortReceive_IT(mb->uart);
-//	set_timer_period(mb, speed);
-//	HAL_UART_Receive_IT(mb->uart, &mb->uart_rx, 1);
-//
-//	return MB_SUCCESS;
-//}
 
 void mb_slave_handle(mb_slave_t *mb) {
 	mb_assert(mb);
@@ -255,6 +246,7 @@ static void set_timer_period(mb_slave_t* mb ,uint32_t speed)
 
 static uint8_t valid_request(mb_slave_t* mb,mb_pdu_t* pdu)
 {
+	// Supported function
 	uint8_t i;
 	for(i = 0; i < sizeof(mb_support_fc);i++)
 	{
@@ -262,7 +254,6 @@ static uint8_t valid_request(mb_slave_t* mb,mb_pdu_t* pdu)
 		break;
 	}
 
-	// Function code not support
 	if (i >= sizeof(mb_support_fc)) {
 		mb_log("MB function not support\n");
 		return MB_EXC_FUNC;
@@ -272,7 +263,7 @@ static uint8_t valid_request(mb_slave_t* mb,mb_pdu_t* pdu)
 	uint16_t nreg;	// number of reg
 
 	addr = pdu->data[MB_PDU_ADDR_HI] << 8 | pdu->data[MB_PDU_ADDR_LO];
-	nreg = pdu->data[MB_PDU_QTY_HI] << 8 | pdu->data[MB_PDU_QTY_LO];
+	nreg = pdu->data[MB_PDU_QTY_HI] << 8  | pdu->data[MB_PDU_QTY_LO];
 
 	switch(pdu->data[MB_PDU_FUNC])
 	{
@@ -374,6 +365,9 @@ static uint8_t execute_func(mb_slave_t* mb, mb_pdu_t* pdu)
 	return 0;
 }
 
+/**
+ * @brief Build exception code.
+ */
 static void build_exc(mb_slave_t* mb, mb_pdu_t* pdu, uint8_t code)
 {
 	/**
@@ -594,7 +588,7 @@ static uint8_t fc_read_reg_hodling(mb_slave_t* mb, mb_pdu_t* pdu)
 	 */
 
 	uint16_t idata = 0;
-	uint8_t* data       = &pdu->data[3];
+	uint8_t* data  = &pdu->data[3];
 
 	pdu->data[2]  = qty * 2;
 	memset(data, 0x00, pdu->data[2]);
