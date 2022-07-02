@@ -24,8 +24,8 @@ SUBDIRS := \
 Core/Src \
 Core/Startup \
 Drivers/STM32L4xx_HAL_Driver/Src \
-modbus \
-modbus/data \
-modbus/utils/SEGGER_RTT/RTT \
-modbus/utils/SEGGER_RTT/Syscalls \
+lib \
+lib/data \
+lib/utils/SEGGER_RTT/RTT \
+lib/utils/SEGGER_RTT/Syscalls \
 

@@ -1,0 +1,11 @@
+ERROR 2022-07-02T08:05:11.744 ..\..\qModMaster\src\modbusadapter.cpp @ 291 Read Data failed.  "Error : Timeout" 
+ERROR 2022-07-02T08:10:13.619 ..\..\qModMaster\src\modbusadapter.cpp @ 291 Read Data failed.  "Error : Timeout" 
+ERROR 2022-07-02T08:10:23.560 ..\..\qModMaster\src\modbusadapter.cpp @ 291 Read Data failed.  "Error : Timeout" 
+ERROR 2022-07-02T08:18:59.131 ..\..\qModMaster\src\modbusadapter.cpp @ 75 Connection failed. Could not connect to serial port 
+ERROR 2022-07-02T08:19:21.844 ..\..\qModMaster\src\modbusadapter.cpp @ 291 Read Data failed.  "Error : Timeout" 
+ERROR 2022-07-02T08:19:36.960 ..\..\qModMaster\src\modbusadapter.cpp @ 291 Read Data failed.  "Error : Timeout" 
+ERROR 2022-07-02T08:20:00.606 ..\..\qModMaster\src\modbusadapter.cpp @ 291 Read Data failed.  "Error : Timeout" 
+ERROR 2022-07-02T08:20:11.682 ..\..\qModMaster\src\modbusadapter.cpp @ 291 Read Data failed.  "Error : Timeout" 
+ERROR 2022-07-02T08:20:38.573 ..\..\qModMaster\src\modbusadapter.cpp @ 291 Read Data failed.  "Error : Timeout" 
+ERROR 2022-07-02T08:20:57.778 ..\..\qModMaster\src\modbusadapter.cpp @ 291 Read Data failed.  "Error : Timeout" 
+ERROR 2022-07-02T08:22:49.501 ..\..\qModMaster\src\modbusadapter.cpp @ 291 Read Data failed.  "Error : Timeout" 

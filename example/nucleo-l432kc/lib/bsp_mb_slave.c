@@ -16,7 +16,7 @@
 #define BSP_MB_TIMER_CLOCK_SOURCE	80		// Mhz
 
 /* UART and TIMER instance */
-#define uart_instance 		huart1
+#define uart_instance 		huart2
 #define timer_instance		htim2
 
 /* private variable ===========================================*/
