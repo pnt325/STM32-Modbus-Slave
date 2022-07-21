@@ -37,7 +37,7 @@ typedef struct{
 	mb_buffer_t        buf;			// MODBUS buffer handle
 	uint8_t 	       slave_addr;	// MODBUS slave address
 	bool               is_init;		// MODBUS initialize flag
-	mb_data_t		   data;		// MODBUS data reg
+	mb_data_t		   *data;		// MODBUS data reg
 }mb_slave_t;
 
 /**
@@ -48,7 +48,7 @@ typedef struct{
  * @param   timer_clk_mhz Timer clock source MHZ
  * @return 	mb_return_t enum value
  */
-mb_return_t mb_slave_init(mb_slave_t* mb, uint8_t sl_addr, uint32_t speed, uint32_t timer_clk_mhz);
+mb_return_t mb_slave_init(mb_slave_t* mb, mb_data_t* data, uint8_t sl_addr, uint32_t speed, uint32_t timer_clk_mhz);
 
 /**
  * @brief De-Initialize
