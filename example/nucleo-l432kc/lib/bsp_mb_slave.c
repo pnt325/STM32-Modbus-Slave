@@ -6,34 +6,54 @@
  */
 
 /* include ====================================================*/
-#include "../lib/bsp_mb_slave.h"
-
-#include "../lib/mb_slave.h"
+#include "bsp_mb_slave.h"
+#include "mb_slave.h"
 
 /* macro ======================================================*/
 #define BSP_MB_SLAVE_ID				0x01
 #define BSP_MB_SLAVE_SPEED			9600	// bps
 #define BSP_MB_TIMER_CLOCK_SOURCE	80		// Mhz
 
+/* type =======================================================*/
+typedef enum
+{
+	BSP_MODBUS_SLAVE_MAIN,	// MODBUS slave will be working with L4 Master
+	BSP_MODBUS_SLAVE_HMI,	// MODBUS slave will be working with HMI touch screen
+	_BSP_MODBUS_SLAVE_NUM,
+}bsp_mb_slave_t;
+
 /* UART and TIMER instance */
-#define uart_instance 		huart2
-#define timer_instance		htim2
+#define uart_instance_main	huart1
+#define uart_instance_hmi	huart2
+#define timer_instance_main	htim2
+#define timer_instance_hmi	htim7
 
 /* private variable ===========================================*/
-static mb_slave_t __mb;
+//static mb_slave_t __mb;			// MODBUS slave instance
+static mb_data_t  __mb_data;	// MODBUS data
+static mb_slave_t __slave[_BSP_MODBUS_SLAVE_NUM];
 
 /* public variable ============================================*/
-extern UART_HandleTypeDef uart_instance;
-extern TIM_HandleTypeDef timer_instance;
+extern UART_HandleTypeDef uart_instance_main;
+extern UART_HandleTypeDef uart_instance_hmi;
+extern TIM_HandleTypeDef timer_instance_main;
+extern TIM_HandleTypeDef timer_instance_hmi;
 
 void bsp_mb_slave_init(void) {
-	__mb.uart = &uart_instance;
-	__mb.timer = &timer_instance;
-	mb_slave_init(&__mb, BSP_MB_SLAVE_ID, BSP_MB_SLAVE_SPEED, BSP_MB_TIMER_CLOCK_SOURCE);
+	__slave[BSP_MODBUS_SLAVE_MAIN].uart  = &uart_instance_main;
+	__slave[BSP_MODBUS_SLAVE_HMI].uart   = &uart_instance_hmi;
+	__slave[BSP_MODBUS_SLAVE_MAIN].timer = &timer_instance_main;
+	__slave[BSP_MODBUS_SLAVE_HMI].timer  = &timer_instance_hmi;
+
+	mb_data_init(&__mb_data);
+
+	mb_slave_init(&__slave[BSP_MODBUS_SLAVE_MAIN], &__mb_data, BSP_MB_SLAVE_ID, BSP_MB_SLAVE_SPEED, BSP_MB_TIMER_CLOCK_SOURCE);
+	mb_slave_init(&__slave[BSP_MODBUS_SLAVE_HMI], &__mb_data, BSP_MB_SLAVE_ID, BSP_MB_SLAVE_SPEED, BSP_MB_TIMER_CLOCK_SOURCE);
 }
 
 void bsp_mb_slave_handle(void) {
-	mb_slave_handle(&__mb);
+	mb_slave_handle(&__slave[BSP_MODBUS_SLAVE_MAIN]);
+	mb_slave_handle(&__slave[BSP_MODBUS_SLAVE_MAIN]);
 }
 
 uint8_t bsp_mb_id_get(void) {
@@ -41,35 +61,35 @@ uint8_t bsp_mb_id_get(void) {
 }
 
 void bsp_mb_coil_set(uint16_t addr, uint8_t status) {
-	__mb.data.coil.set(&__mb.data.coil, addr, status);
+	__mb_data.coil.set(&__mb_data.coil, addr, status);
 }
 
 uint8_t bsp_mb_coil_get(uint16_t addr) {
-	return __mb.data.coil.get(&__mb.data.coil, addr);
+	return __mb_data.coil.get(&__mb_data.coil, addr);
 }
 
 void bsp_mb_discrete_input_set(uint16_t addr, uint8_t status) {
-	__mb.data.input.set(&__mb.data.input, addr, status);
+	__mb_data.input.set(&__mb_data.input, addr, status);
 }
 
 uint8_t bsp_mb_discrete_input_get(uint16_t addr) {
-	return __mb.data.input.get(&__mb.data.input, addr);
+	return __mb_data.input.get(&__mb_data.input, addr);
 }
 
 void bsp_mb_input_reg_set(uint16_t addr, uint16_t value) {
-	__mb.data.reg_input.set(&__mb.data.reg_input, addr, value);
+	__mb_data.reg_input.set(&__mb_data.reg_input, addr, value);
 }
 
 uint16_t bsp_mb_input_reg_get(uint16_t addr) {
-	return __mb.data.reg_input.get(&__mb.data.reg_input, addr);
+	return __mb_data.reg_input.get(&__mb_data.reg_input, addr);
 }
 
 void bsp_mb_holding_reg_set(uint16_t addr, uint16_t value) {
-	__mb.data.reg_holding.set(&__mb.data.reg_holding, addr, value);
+	__mb_data.reg_holding.set(&__mb_data.reg_holding, addr, value);
 }
 
 uint16_t bsp_mb_holding_reg_get(uint16_t addr) {
-	return __mb.data.reg_holding.get(&__mb.data.reg_holding, addr);
+	return __mb_data.reg_holding.get(&__mb_data.reg_holding, addr);
 }
 
 /*========================================================================*/
@@ -80,9 +100,16 @@ uint16_t bsp_mb_holding_reg_get(uint16_t addr) {
   */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	if(__mb.timer == htim)
+	if(htim == __slave[BSP_MODBUS_SLAVE_MAIN].timer)
 	{
-		_mb_slave_timer_irq(&__mb);
+		_mb_slave_timer_irq(&__slave[BSP_MODBUS_SLAVE_MAIN]);
+		return;
+	}
+
+	if(htim == __slave[BSP_MODBUS_SLAVE_HMI].timer)
+	{
+		_mb_slave_timer_irq(&__slave[BSP_MODBUS_SLAVE_HMI]);
+		return;
 	}
 }
 
@@ -93,9 +120,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if(__mb.uart == huart)
+	if(huart == __slave[BSP_MODBUS_SLAVE_MAIN].uart)
 	{
-		_mb_slave_rx_irq(&__mb);
+		_mb_slave_rx_irq(&__slave[BSP_MODBUS_SLAVE_MAIN]);
+		return;
+	}
+
+	if(huart == __slave[BSP_MODBUS_SLAVE_HMI].uart)
+	{
+		_mb_slave_rx_irq(&__slave[BSP_MODBUS_SLAVE_HMI]);
+		return;
 	}
 }
 
@@ -106,8 +140,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   */
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if(__mb.uart == huart)
+	if(huart == __slave[BSP_MODBUS_SLAVE_MAIN].uart)
 	{
-		_mb_slave_tx_irq(&__mb);
+		_mb_slave_tx_irq(&__slave[BSP_MODBUS_SLAVE_MAIN]);
+		return;
+	}
+
+	if(huart == __slave[BSP_MODBUS_SLAVE_HMI].uart)
+	{
+		_mb_slave_tx_irq(&__slave[BSP_MODBUS_SLAVE_HMI]);
+		return;
 	}
 }

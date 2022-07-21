@@ -64,8 +64,8 @@ all: main-build
 main-build: nucleo-l432kc.elf secondary-outputs
 
 # Tool invocations
-nucleo-l432kc.elf nucleo-l432kc.map: $(OBJS) $(USER_OBJS) D:\OneDrive\00_Upwork\2022\02_Ongoing\29_Aaron,\ Modbus\ development\01_Firmware\stm32_mb_slave\example\nucleo-l432kc\STM32L432KCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "nucleo-l432kc.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\OneDrive\00_Upwork\2022\02_Ongoing\29_Aaron, Modbus development\01_Firmware\stm32_mb_slave\example\nucleo-l432kc\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="nucleo-l432kc.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+nucleo-l432kc.elf nucleo-l432kc.map: $(OBJS) $(USER_OBJS) C:\Users\phatn\Documents\git_repo\stm32_mb_slave\example\nucleo-l432kc\STM32L432KCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "nucleo-l432kc.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\phatn\Documents\git_repo\stm32_mb_slave\example\nucleo-l432kc\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="nucleo-l432kc.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

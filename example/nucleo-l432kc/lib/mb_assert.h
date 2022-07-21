@@ -8,7 +8,7 @@
 #ifndef MB_ASSERT_H_
 #define MB_ASSERT_H_
 
-#include "../lib/mb_config.h"
+#include "mb_config.h"
 
 #ifdef MB_DEBUG
 #define MB_ASSERT

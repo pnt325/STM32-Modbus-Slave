@@ -52,8 +52,8 @@ Purpose : Replacement for printf to write formatted data via RTT
 Revision: $Rev: 17697 $
 ----------------------------------------------------------------------
 */
-#include "../../../../lib/utils/SEGGER_RTT/RTT/SEGGER_RTT.h"
-#include "../../../../lib/utils/SEGGER_RTT/RTT/SEGGER_RTT_Conf.h"
+#include "SEGGER_RTT.h"
+#include "SEGGER_RTT_Conf.h"
 
 /*********************************************************************
 *

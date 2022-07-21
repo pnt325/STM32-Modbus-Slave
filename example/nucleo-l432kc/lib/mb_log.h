@@ -8,14 +8,14 @@
 #ifndef MB_LOG_H_
 #define MB_LOG_H_
 
-#include "../lib/mb_config.h"
+#include "mb_config.h"
 
 #ifdef MB_DEBUG
-//#define MB_LOG
+#define MB_LOG
 #endif
 
 #ifdef MB_LOG
-#include "../lib/utils/SEGGER_RTT/RTT/SEGGER_RTT.h"
+#include "SEGGER_RTT.h"
 #define mb_log_init()		SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_SKIP)
 #define mb_log(_c, ...)		SEGGER_RTT_printf(0, _c, ##__VA_ARGS__);
 #else
