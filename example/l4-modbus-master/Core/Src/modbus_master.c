@@ -80,7 +80,7 @@ uint16_t modbus_master_get_response_buffer(modbus_master_t *modbus, uint8_t inde
 
 void modbus_master_clear_response_buffer(modbus_master_t *modbus)
 {
-	// [x] budfix
+	// [x] bug fix
 	memset(modbus->context.response_buffer, 0x00, sizeof(modbus->context.response_buffer));
 //  memset(modbus_master.response_buffer, 0, MODBUS_MASTER_RX_BUFFER_SIZE);
 }
@@ -96,6 +96,7 @@ void modbus_master_set_transmit_buffer(modbus_master_t *modbus, uint8_t index, u
 
 void modbus_master_clear_transmit_buffer(modbus_master_t *modbus)
 {
+	// [x] bug fix
 	memset(modbus->context.transmit_buffer, 0, sizeof(modbus->context.transmit_buffer));
   // memset(modbus_master.transmit_buffer, 0, MODBUS_MASTER_TX_BUFFER_SIZE);
 }
