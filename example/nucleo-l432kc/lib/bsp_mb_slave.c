@@ -24,7 +24,7 @@ typedef enum
 
 /* UART and TIMER instance */
 #define uart_instance_main	huart1
-#define uart_instance_hmi	huart2
+#define uart_instance_hmi	hlpuart1
 #define timer_instance_main	htim2
 #define timer_instance_hmi	htim7
 

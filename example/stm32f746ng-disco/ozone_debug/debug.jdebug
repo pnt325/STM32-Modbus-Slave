@@ -4,8 +4,8 @@
 *                         www.segger.com                             *
 **********************************************************************
 
-File          : C:/Users/phatn/Documents/git_repo/stm32_mb_slave/source/ozone_debug/debug.jdebug
-Created       : 8 Jun 2022 14:41
+File          : C:/Users/phatn/Documents/git_repo/stm32_mb_slave/example/stm32f746ng-disco/ozone_debug/debug.jdebug
+Created       : 21 Jul 2022 11:38
 Ozone Version : V3.26b
 */
 
@@ -22,8 +22,8 @@ void OnProjectLoad (void) {
   //
   // Dialog-generated settings
   //
-  Project.AddPathSubstitute ("C:/Users/phatn/Documents/git_repo/stm32_mb_slave/source/ozone_debug", "$(ProjectDir)");
-  Project.AddPathSubstitute ("c:/users/phatn/documents/git_repo/stm32_mb_slave/source/ozone_debug", "$(ProjectDir)");
+  Project.AddPathSubstitute ("C:/Users/phatn/Documents/git_repo/stm32_mb_slave/example/stm32f746ng-disco/ozone_debug", "$(ProjectDir)");
+  Project.AddPathSubstitute ("c:/users/phatn/documents/git_repo/stm32_mb_slave/example/stm32f746ng-disco/ozone_debug", "$(ProjectDir)");
   Project.SetDevice ("STM32F746NG");
   Project.SetHostIF ("USB", "774690933");
   Project.SetTargetIF ("JTAG");
@@ -32,7 +32,7 @@ void OnProjectLoad (void) {
   //
   // User settings
   //
-  File.Open ("C:/Users/phatn/Documents/git_repo/stm32_mb_slave/source/Debug/modbus_lib.elf");
+  File.Open ("C:/Users/phatn/Documents/git_repo/stm32_mb_slave/example/stm32f746ng-disco/Debug/stm32f746ng-disco.elf");
 }
 
 /*********************************************************************

@@ -20,16 +20,17 @@
 
 /* type =======================================================*/
 struct tx_buf_s{
-	uint16_t head;
-	uint16_t tail;
-	uint8_t  data[UART_TX_BUF_SIZE];
+	volatile bool     on_tx;		// On TX state
+	volatile uint16_t tx_len;		// number of data on TX
+	uint16_t          head;
+	uint16_t          tail;
+	uint8_t           data[UART_TX_BUF_SIZE];
 };
 
 /* variable ===================================================*/
  const uint8_t mb_support_fc[] = MB_FC_SUPORT_DEFAULT;
 
  // UART TX
- static volatile uint16_t tx_len;
  static struct tx_buf_s   tx_buf;
 
 
@@ -51,11 +52,12 @@ static uint8_t fc_write_single_reg(mb_slave_t* mb, mb_pdu_t* pdu);
 static uint8_t fc_write_multi_coil(mb_slave_t* mb, mb_pdu_t* pdu);
 static uint8_t fc_write_multi_reg(mb_slave_t* mb, mb_pdu_t* pdu);
 
-mb_return_t mb_slave_init(mb_slave_t* mb, uint8_t sl_addr, uint32_t speed, uint32_t timer_clk_mhz)
+mb_return_t mb_slave_init(mb_slave_t* mb, mb_data_t* data, uint8_t sl_addr, uint32_t speed, uint32_t timer_clk_mhz)
 {
 	mb_assert(mb);
 	mb_assert(mb->uart);
 	mb_assert(mb->timer);
+	mb_assert(mb_data_is_init(mb->data));
 
 	mb_log_init();
 	mb_log("MODBUS init\n");
@@ -72,7 +74,9 @@ mb_return_t mb_slave_init(mb_slave_t* mb, uint8_t sl_addr, uint32_t speed, uint3
 
 	ring_buffer_init(&mb->uart_buf);
 	mb_buffer_init(&mb->buf);
-	mb_data_init(&mb->data);
+
+	// Set instance
+	mb->data = data;
 	mb->slave_addr = sl_addr;
 
 	// Timer configure
@@ -82,9 +86,9 @@ mb_return_t mb_slave_init(mb_slave_t* mb, uint8_t sl_addr, uint32_t speed, uint3
 
 	mb->is_init = true;
 
-	tx_buf.tail = 0;
-	tx_buf.head = 0;
-	tx_len = 0;
+	tx_buf.tail   = 0;
+	tx_buf.head   = 0;
+	tx_buf.tx_len = 0;
 
 	// Start receive UART
 	HAL_UART_Receive_IT(mb->uart, &mb->uart_rx, 1);
@@ -111,22 +115,6 @@ mb_return_t mb_slave_deinit(mb_slave_t* mb)
 
 	return MB_SUCCESS;
 }
-
-//mb_return_t mb_slave_set_speed(mb_slave_t *mb,uint32_t speed)
-//{
-//	mb_assert(mb);
-//	if(mb->is_init == false) {
-//		mb_log("MODBUS error: is not initialize\n");
-//		return MB_FAILURE;
-//	}
-//
-//	HAL_TIM_Base_Stop_IT(mb->timer);
-//	HAL_UART_AbortReceive_IT(mb->uart);
-//	set_timer_period(mb, speed);
-//	HAL_UART_Receive_IT(mb->uart, &mb->uart_rx, 1);
-//
-//	return MB_SUCCESS;
-//}
 
 void mb_slave_handle(mb_slave_t *mb) {
 	mb_assert(mb);
@@ -196,7 +184,8 @@ void mb_slave_handle(mb_slave_t *mb) {
 void _mb_slave_tx_irq(mb_slave_t* mb)
 {
 	mb_assert(mb);
-	tx_buf.tail = (tx_buf.tail + tx_len) % UART_TX_BUF_SIZE;
+	tx_buf.tail  = (tx_buf.tail + tx_buf.tx_len) % UART_TX_BUF_SIZE;
+	tx_buf.on_tx = false;
 	start_transmit(mb);
 }
 
@@ -277,37 +266,37 @@ static uint8_t valid_request(mb_slave_t* mb,mb_pdu_t* pdu)
 	switch(pdu->data[MB_PDU_FUNC])
 	{
 	case MB_FC_READ_COIL:
-		if (!((nreg >= 1) && (nreg <= mb->data.coil.nbit)))
+		if (!((nreg >= 1) && (nreg <= mb->data->coil.nbit)))
 			return MB_EXC_ADDR_RANGE;
-		if(!((addr < mb->data.coil.nbit) && ((addr + nreg) <= mb->data.coil.nbit)))
+		if(!((addr < mb->data->coil.nbit) && ((addr + nreg) <= mb->data->coil.nbit)))
 			return MB_EXC_REG_QTY;
 		break;
 	case MB_FC_READ_DISCRETE_INPUT:
-		if (!((nreg >= 1) && (nreg <= mb->data.input.nbit)))
+		if (!((nreg >= 1) && (nreg <= mb->data->input.nbit)))
 			return MB_EXC_ADDR_RANGE;
-		if(!((addr < mb->data.input.nbit) && ((addr + nreg) <= mb->data.input.nbit)))
+		if(!((addr < mb->data->input.nbit) && ((addr + nreg) <= mb->data->input.nbit)))
 			return MB_EXC_REG_QTY;
 		break;
 	case MB_FC_READ_INPUT_REG:
-		if (mb->data.reg_input.nreg > 0x7D) {
+		if (mb->data->reg_input.nreg > 0x7D) {
 			if (!(nreg >= 1 && nreg <= 0x7D))
 				return MB_EXC_ADDR_RANGE;
 		} else {
-			if (!(nreg >= 1 && nreg <= mb->data.reg_input.nreg))
+			if (!(nreg >= 1 && nreg <= mb->data->reg_input.nreg))
 				return MB_EXC_ADDR_RANGE;
 		}
-		if(!((addr < mb->data.reg_input.nreg) && ((addr + nreg ) <= mb->data.reg_input.nreg)))
+		if(!((addr < mb->data->reg_input.nreg) && ((addr + nreg ) <= mb->data->reg_input.nreg)))
 			return MB_EXC_REG_QTY;
 		break;
 	case MB_FC_READ_HOLDING_REG:
-		if (mb->data.reg_holding.nreg > 0x7D) {
+		if (mb->data->reg_holding.nreg > 0x7D) {
 			if (!(nreg >= 1 && nreg <= 0x7D))
 				return MB_EXC_ADDR_RANGE;
 		} else {
-			if (!((nreg >= 1) && (nreg <= mb->data.reg_holding.nreg)))
+			if (!((nreg >= 1) && (nreg <= mb->data->reg_holding.nreg)))
 				return MB_EXC_ADDR_RANGE;
 		}
-		if(!((addr < mb->data.reg_holding.nreg) && ((addr + nreg ) <= mb->data.reg_holding.nreg)))
+		if(!((addr < mb->data->reg_holding.nreg) && ((addr + nreg ) <= mb->data->reg_holding.nreg)))
 			return MB_EXC_REG_QTY;
 		break;
 	case MB_FC_WRITE_MULTI_COIL:
@@ -317,31 +306,31 @@ static uint8_t valid_request(mb_slave_t* mb,mb_pdu_t* pdu)
 		if(nreg % 8)
 			nbyte += 1;
 
-		if(!((nreg >= 1) && (nreg <= mb->data.coil.nbit) && (nbyte == pdu->data[MB_PDU_CNT])))
+		if(!((nreg >= 1) && (nreg <= mb->data->coil.nbit) && (nbyte == pdu->data[MB_PDU_CNT])))
 			return MB_EXC_REG_QTY;
-		if(!((addr < mb->data.coil.nbit) && ((addr + nreg) <= mb->data.coil.nbit)))
+		if(!((addr < mb->data->coil.nbit) && ((addr + nreg) <= mb->data->coil.nbit)))
 			return MB_EXC_ADDR_RANGE;
 		break;
 	}
 	case MB_FC_WRITE_SINGLE_COIL:
 		if(!((nreg == 0x0000) || (nreg == 0xFF00)))
 			return MB_EXC_REG_QTY;
-		if(!(addr < mb->data.coil.nbit))
+		if(!(addr < mb->data->coil.nbit))
 			return MB_EXC_ADDR_RANGE;
 		break;
 	case MB_FC_WRITE_MULTI_REG:
-		if(mb->data.reg_holding.nreg < 0x7B) {
-			if (!((nreg >= 1) && (nreg <= mb->data.reg_holding.nreg) && (pdu->data[MB_PDU_CNT] == nreg * 2)))
+		if(mb->data->reg_holding.nreg < 0x7B) {
+			if (!((nreg >= 1) && (nreg <= mb->data->reg_holding.nreg) && (pdu->data[MB_PDU_CNT] == nreg * 2)))
 				return MB_EXC_REG_QTY;
 		} else {
 			if (!((nreg >= 1) && (nreg <= 0x7B) && (pdu->data[MB_PDU_CNT] == nreg * 2)))
 				return MB_EXC_REG_QTY;
 		}
-		if(!((addr < mb->data.reg_holding.nreg) && ((addr + nreg) <= mb->data.reg_holding.nreg)))
+		if(!((addr < mb->data->reg_holding.nreg) && ((addr + nreg) <= mb->data->reg_holding.nreg)))
 			return MB_EXC_ADDR_RANGE;
 		break;
 	case MB_FC_WRITE_SINGLE_REG:
-		if(!(addr <= mb->data.reg_holding.nreg))
+		if(!(addr <= mb->data->reg_holding.nreg))
 			return MB_EXC_ADDR_RANGE;
 		break;
 	}
@@ -411,7 +400,9 @@ static void set_tx(mb_slave_t* mb, mb_pdu_t* pdu)
 		mb_assert(tx_buf.head != tx_buf.tail);
 	}
 
-	start_transmit(mb);
+	if (!tx_buf.on_tx) {
+		start_transmit(mb);
+	}
 }
 
 static void start_transmit(mb_slave_t* mb) {
@@ -419,12 +410,13 @@ static void start_transmit(mb_slave_t* mb) {
 		return;
 
 	if (tx_buf.tail < tx_buf.head) {
-		tx_len = tx_buf.head - tx_buf.tail;
+		tx_buf.tx_len = tx_buf.head - tx_buf.tail;
 	} else {
-		tx_len = UART_TX_BUF_SIZE - tx_buf.tail;
+		tx_buf.tx_len = UART_TX_BUF_SIZE - tx_buf.tail;
 	}
 
-	HAL_UART_Transmit_IT(mb->uart, &tx_buf.data[tx_buf.tail], tx_len);
+	tx_buf.on_tx = true;
+	HAL_UART_Transmit_IT(mb->uart, &tx_buf.data[tx_buf.tail], tx_buf.tx_len);
 }
 
 static uint8_t fc_read_coil(mb_slave_t* mb, mb_pdu_t* pdu)
@@ -466,7 +458,7 @@ static uint8_t fc_read_coil(mb_slave_t* mb, mb_pdu_t* pdu)
 		uint8_t ibit  = i % 8;
 		uint8_t val   = 1 << ibit;
 
-		if(mb->data.coil.get(&mb->data.coil, addr + i))
+		if(mb->data->coil.get(&mb->data->coil, addr + i))
 			data[ibyte] = data[ibyte] | val;
 		else
 			data[ibyte] = data[ibyte] & (~val);
@@ -515,7 +507,7 @@ static uint8_t fc_read_input(mb_slave_t* mb, mb_pdu_t* pdu)
 		uint8_t ibit  = i % 8;
 		uint8_t val   = 1 << ibit;
 
-		if(mb->data.coil.get(&mb->data.input, addr + i))
+		if(mb->data->coil.get(&mb->data->input, addr + i))
 			data[ibyte] = data[ibyte] | val;
 		else
 			data[ibyte] = data[ibyte] & (~val);
@@ -558,7 +550,7 @@ static uint8_t fc_read_reg_input(mb_slave_t* mb, mb_pdu_t* pdu)
 	uint16_t data_index = 0;
 	for(uint8_t i = 0; i < qty; i++)
 	{
-		uint16_t value     = mb->data.reg_input.get(&mb->data.reg_input, addr + i);
+		uint16_t value     = mb->data->reg_input.get(&mb->data->reg_input, addr + i);
 		data[data_index++] = value >> 8;
 		data[data_index++] = (uint8_t)value;
 	}
@@ -594,14 +586,14 @@ static uint8_t fc_read_reg_hodling(mb_slave_t* mb, mb_pdu_t* pdu)
 	 */
 
 	uint16_t idata = 0;
-	uint8_t* data       = &pdu->data[3];
+	uint8_t* data  = &pdu->data[3];
 
-	pdu->data[2]  = qty * 2;
+	pdu->data[2] = qty * 2;
 	memset(data, 0x00, pdu->data[2]);
 
 	for(uint8_t i = 0; i < qty; i++)
 	{
-		uint16_t value = mb->data.reg_holding.get(&mb->data.reg_holding, addr + i);
+		uint16_t value = mb->data->reg_holding.get(&mb->data->reg_holding, addr + i);
 		data[idata++] = (uint8_t)(value >> 8);
 		data[idata++] = (uint8_t)(value);
 	}
@@ -638,9 +630,9 @@ static uint8_t fc_write_single_coil(mb_slave_t* mb, mb_pdu_t* pdu)
 	 */
 
 	if (value == 0x00000)
-		mb->data.coil.set(&mb->data.coil, addr, 0);
+		mb->data->coil.set(&mb->data->coil, addr, 0);
 	else
-		mb->data.coil.set(&mb->data.coil, addr, 1);
+		mb->data->coil.set(&mb->data->coil, addr, 1);
 
 	return 0;
 }
@@ -672,7 +664,7 @@ static uint8_t fc_write_single_reg(mb_slave_t* mb, mb_pdu_t* pdu)
 	 * len = 8
 	 */
 
-	mb->data.reg_holding.set(&mb->data.reg_holding, addr, value);
+	mb->data->reg_holding.set(&mb->data->reg_holding, addr, value);
 
 	return 0;
 }
@@ -709,7 +701,7 @@ static uint8_t fc_write_multi_coil(mb_slave_t* mb, mb_pdu_t* pdu)
 		uint8_t ibit  = i % 8;
 
 		uint8_t status = (data[ibyte] >> ibit) & 0x01;
-		mb->data.coil.set(&mb->data.coil, addr + i, status);
+		mb->data->coil.set(&mb->data->coil, addr + i, status);
 	}
 
 	/**
@@ -755,7 +747,7 @@ static uint8_t fc_write_multi_reg(mb_slave_t* mb, mb_pdu_t* pdu)
 		uint8_t hi = data[data_index++];
 		uint8_t lo = data[data_index++];
 		uint16_t value = hi << 8 | lo;
-		mb->data.reg_holding.set(&mb->data.reg_holding, addr + i, value);
+		mb->data->reg_holding.set(&mb->data->reg_holding, addr + i, value);
 	}
 
 	/**
