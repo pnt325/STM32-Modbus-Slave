@@ -15,6 +15,8 @@
 
 static u8g2_t u8g2;
 
+static bsp_modbus_master_t  modbus_display = BSP_MODBUS_2;
+
 #define header_font u8g2_font_6x12_tf
 #define footer_font2 u8g2_font_6x10_tf
 #define medium_font u8g2_font_6x13_tr
@@ -23,6 +25,7 @@ static u8g2_t u8g2;
 #define huge_font u8g2_font_9x18B_tn
 #define huge_font2 u8g2_font_10x20_tn
 #define test_font u8g2_font_inb16_mr
+
 
 
 void Display_Init(void){
@@ -57,9 +60,9 @@ uint8_t Error=0;
 
 	 // bsp_rs485_enable_receive(false);
 	 // bsp_rs485_enable_transmit(true);
-	  if (bsp_modbus_master_read_holding_register(0x01, 0x000B, 0x0001) == 0x00)
+	  if (bsp_modbus_master_read_holding_register(modbus_display, 0x01, 0x000B, 0x0001) == 0x00)
 	  {
-	    mdata[0] = bsp_modbus_master_get_response_buffer(0);
+	    mdata[0] = bsp_modbus_master_get_response_buffer(modbus_display, 0);
 	   // mdata[1] = bsp_modbus_master_get_response_buffer(1);
 	   // mdata[2] = bsp_modbus_master_get_response_buffer(2);
 	   // mdata[3] = bsp_modbus_master_get_response_buffer(3);

@@ -55,10 +55,10 @@ UART_HandleTypeDef hlpuart1;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
+static bsp_modbus_master_t modbus_master = BSP_MODBUS_1;
 
-
-uint8_t Uart1_RxBuffer = 0;  // modbus test vars
-uint8_t Uart1_TxBuffer = 0;
+//uint8_t Uart1_RxBuffer = 0;  // modbus test vars
+//uint8_t Uart1_TxBuffer = 0;
 uint16_t data[32];
 char buffer[128];
 int len;
@@ -153,7 +153,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-  HAL_UART_Receive_IT(&huart1, &Uart1_RxBuffer, 1);
+  // HAL_UART_Receive_IT(&huart1, &Uart1_RxBuffer, 1);
 
   bsp_modbus_master_init();
 
@@ -441,7 +441,7 @@ void send_single_register(uint16_t reg,uint16_t data)
 	// slave_id: 0x01
     	// write_addr: 0x0000
     	// value: 14
-	if (bsp_modbus_master_write_single_register(0x01, reg, data) == 0x00)
+	if (bsp_modbus_master_write_single_register(modbus_master ,0x01, reg, data) == 0x00)
   	{
  		// Write success
 
@@ -458,15 +458,15 @@ void send_multiple_register(void)
 	//bsp_rs485_enable_transmit(true);
 
 	// Prepare transmit data
-	bsp_modbus_master_set_transmit_buffer(0, 222);
-	bsp_modbus_master_set_transmit_buffer(1, 111);
-	bsp_modbus_master_set_transmit_buffer(2, 300);
+	bsp_modbus_master_set_transmit_buffer(modbus_master, 0, 222);
+	bsp_modbus_master_set_transmit_buffer(modbus_master, 1, 111);
+	bsp_modbus_master_set_transmit_buffer(modbus_master, 2, 300);
 
 
     	// slave_id: 0x01
     	// write_addr: 0x0000
     	// size: 3
-	if (bsp_modbus_master_write_mutiple_register(0x01, 0x0000, 3) == 0x00)
+	if (bsp_modbus_master_write_mutiple_register(modbus_master, 0x01, 0x0000, 3) == 0x00)
   	{
  		// Write success
   	}
@@ -482,16 +482,16 @@ void test2(void)
 
  // bsp_rs485_enable_receive(false);
  // bsp_rs485_enable_transmit(true);
-  if (bsp_modbus_master_read_input_register(0x01, 0x0000, 0x0008) == 0x00)
+  if (bsp_modbus_master_read_input_register(modbus_master, 0x01, 0x0000, 0x0008) == 0x00)
   {
-    data[0] = bsp_modbus_master_get_response_buffer(0);
-    data[1] = bsp_modbus_master_get_response_buffer(1);
-    data[2] = bsp_modbus_master_get_response_buffer(2);
-    data[3] = bsp_modbus_master_get_response_buffer(3);
-    data[4] = bsp_modbus_master_get_response_buffer(4);
-    data[5] = bsp_modbus_master_get_response_buffer(5);
-    data[6] = bsp_modbus_master_get_response_buffer(6);
-    data[7] = bsp_modbus_master_get_response_buffer(7);
+    data[0] = bsp_modbus_master_get_response_buffer(modbus_master, 0);
+    data[1] = bsp_modbus_master_get_response_buffer(modbus_master, 1);
+    data[2] = bsp_modbus_master_get_response_buffer(modbus_master, 2);
+    data[3] = bsp_modbus_master_get_response_buffer(modbus_master, 3);
+    data[4] = bsp_modbus_master_get_response_buffer(modbus_master, 4);
+    data[5] = bsp_modbus_master_get_response_buffer(modbus_master, 5);
+    data[6] = bsp_modbus_master_get_response_buffer(modbus_master, 6);
+    data[7] = bsp_modbus_master_get_response_buffer(modbus_master, 7);
   }
   else
   {
@@ -543,11 +543,11 @@ void test3(void)
  	     data[7] = 0;
   //bsp_rs485_enable_receive(false);
   //bsp_rs485_enable_transmit(true);
-  if (bsp_modbus_master_read_holding_register(0x01, 0x0000, 0x0003) == 0x00)
+  if (bsp_modbus_master_read_holding_register(modbus_master, 0x01, 0x0000, 0x0003) == 0x00)
   {
-    data[0] = bsp_modbus_master_get_response_buffer(0);
-    data[1] = bsp_modbus_master_get_response_buffer(1);
-    data[2] = bsp_modbus_master_get_response_buffer(2);
+    data[0] = bsp_modbus_master_get_response_buffer(modbus_master, 0);
+    data[1] = bsp_modbus_master_get_response_buffer(modbus_master, 1);
+    data[2] = bsp_modbus_master_get_response_buffer(modbus_master, 2);
     //data[3] = bsp_modbus_master_get_response_buffer(3);
    // data[4] = bsp_modbus_master_get_response_buffer(4);
     //data[5] = bsp_modbus_master_get_response_buffer(5);
@@ -588,31 +588,34 @@ void test3(void)
 
 
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-  if (huart->Instance == huart1.Instance)
-  {HAL_GPIO_TogglePin(LD3_GPIO_Port,LD3_Pin);
-    HAL_UART_Receive_IT(&huart1, &Uart1_RxBuffer, 1);
-    if (Queue_IsFull(&modbus_master_rx_queue) == 0)
-      Queue_EnQueue(&modbus_master_rx_queue, Uart1_RxBuffer);
-  }
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+//	if (huart->Instance == huart1.Instance) {
+//		HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+//		HAL_UART_Receive_IT(&huart1, &Uart1_RxBuffer, 1);
+//		if (Queue_IsFull(&modbus_master_rx_queue) == 0)
+//			Queue_EnQueue(&modbus_master_rx_queue, Uart1_RxBuffer);
+//	}
+
+	bsp_modbus_master_rx_irq(huart);
 }
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
-  if (huart->Instance == huart1.Instance)
-  {
-    if (Queue_IsEmpty(&modbus_master_tx_queue) == 1)
-    {
-      modbus_complete_transmit_req = true;
-      //bsp_rs485_enable_receive(true);
-    }
-    else
-    {
-      Uart1_TxBuffer = Queue_DeQueue(&modbus_master_tx_queue);
-      HAL_UART_Transmit_IT(&huart1, &Uart1_TxBuffer, 1);
-    }
-  }
+//  if (huart->Instance == huart1.Instance)
+//  {
+//    if (Queue_IsEmpty(&modbus_master_tx_queue) == 1)
+//    {
+//      modbus_complete_transmit_req = true;
+//      //bsp_rs485_enable_receive(true);
+//    }
+//    else
+//    {
+//      Uart1_TxBuffer = Queue_DeQueue(&modbus_master_tx_queue);
+//      HAL_UART_Transmit_IT(&huart1, &Uart1_TxBuffer, 1);
+//    }
+//  }
+
+	bsp_modbus_master_tx_irq(huart);
 }
 
 

@@ -19,25 +19,56 @@ extern "C" {
 #endif
 
 /* Includes ----------------------------------------------------------- */
+#include <stdint.h>
+#include <stdio.h>
 #include "util.h"
 #include "bsp.h"
 #include "queue_circle_array.h"
 
 /* Private macros ----------------------------------------------------- */
+#define MODBUS_MASTER_TX_BUFFER_SIZE                  (64)
+#define MODBUS_MASTER_RX_BUFFER_SIZE                  (64)
+#define MODBUS_MASTER_ADU_BUFFER_SIZE			      (128)
 /* Public defines ----------------------------------------------------- */
 /* Public variables --------------------------------------------------- */
-extern volatile bool modbus_complete_transmit_req;
-extern struct_queue_array modbus_master_tx_queue;
-extern struct_queue_array modbus_master_rx_queue;
+//extern volatile bool modbus_complete_transmit_req;
+//extern struct_queue_array modbus_master_tx_queue;
+//extern struct_queue_array modbus_master_rx_queue;
 
 /* Public enumerate/structure ----------------------------------------- */
+typedef struct
+{
+	uint8_t tx_buffer_queue[MODBUS_MASTER_TX_BUFFER_SIZE];
+	uint8_t rx_buffer_queue[MODBUS_MASTER_RX_BUFFER_SIZE];
+	uint16_t transmit_buffer[MODBUS_MASTER_TX_BUFFER_SIZE]; // Data want to write to slave
+	uint16_t response_buffer[MODBUS_MASTER_RX_BUFFER_SIZE]; // Data response from slave
+	uint8_t adu[128];
+	uint8_t adu_size;
+
+	uint8_t slave_id;
+	uint16_t read_addr;
+	uint16_t read_quantity;
+	uint16_t write_addr;
+	uint16_t write_quantity;
+}modbus_master_context_t;
+
+
 /**
  * @brief Modbus master struct
  */
 typedef struct
 {
   uint32_t (*bsp_get_tick) (void);
-  void     (*bsp_uart_start_transmit) (void);
+  void     (*bsp_uart_start_transmit) (void* param);
+  struct_queue_array tx_queue;
+  struct_queue_array rx_queue;
+  UART_HandleTypeDef* uart;
+
+  uint8_t rx_buf;
+  uint8_t tx_buf;
+  volatile uint8_t tx_complete_req;
+
+  modbus_master_context_t context;
 }
 modbus_master_t;
 
@@ -79,6 +110,8 @@ uint8_t modbus_master_mask_write_register(modbus_master_t *modbus, uint8_t slave
 uint8_t modbus_master_read_mutiple_registers(modbus_master_t *modbus, uint8_t slave_id, uint16_t read_addr, uint16_t read_size,
                                             uint16_t write_addr, uint16_t write_size);
 
+void modbus_master_rx_irq(modbus_master_t* master);
+void modbus_master_tx_irq(modbus_master_t* master);
 /* -------------------------------------------------------------------------- */
 #ifdef __cplusplus
 } // extern "C"

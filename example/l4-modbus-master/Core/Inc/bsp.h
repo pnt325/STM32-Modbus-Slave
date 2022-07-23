@@ -23,6 +23,8 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 #include "stm32l4xx_hal.h"
+#include "stm32l4xx_hal_uart.h"
+#include "stm32l4xx_hal_uart_ex.h"
 
 /* Public defines ----------------------------------------------------- */
 /* Public enumerate/structure ----------------------------------------- */
