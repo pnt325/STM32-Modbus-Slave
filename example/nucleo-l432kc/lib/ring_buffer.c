@@ -5,12 +5,10 @@
  *      Author: phatn
  */
 
-#include "../lib/ring_buffer.h"
-
 #include <stdio.h>
-
-#include "../lib/mb_assert.h"
-#include "../lib/mb_log.h"
+#include "mb_assert.h"
+#include "mb_log.h"
+#include "ring_buffer.h"
 
 static void     _add(ring_buffer_t *buf, uint8_t data);
 static void     _get(ring_buffer_t *buf, uint8_t *obuf, uint16_t *buf_size);

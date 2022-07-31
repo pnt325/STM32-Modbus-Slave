@@ -5,10 +5,9 @@
  *      Author: phatn
  */
 
-#include "../lib/mb_buffer.h"
-
-#include "../lib/mb_assert.h"
-#include "../lib/mb_log.h"
+#include "mb_buffer.h"
+#include "mb_assert.h"
+#include "mb_log.h"
 
 static mb_pdu_t* _next(mb_buffer_t *buf);
 static void      _commit_next(mb_buffer_t *buf);

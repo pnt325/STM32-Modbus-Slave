@@ -1,25 +1,25 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2022 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2022 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "tim.h"
 #include "usart.h"
+#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -55,7 +55,8 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+extern void modbus_slave_example_init(void);
+extern void modbus_slave_example_run(void);
 /* USER CODE END 0 */
 
 /**
@@ -86,46 +87,24 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART2_UART_Init();
   MX_TIM2_Init();
+  MX_TIM7_Init();
+  MX_USART1_UART_Init();
+  MX_LPUART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  bsp_mb_slave_init();
-
-	// Update coil status
-	bsp_mb_coil_set(0, 1);
-	bsp_mb_coil_set(1, 0);
-	bsp_mb_coil_set(2, 1);
-	bsp_mb_coil_set(3, 0);
-
-	// Update input register
-	bsp_mb_discrete_input_set(0, 0);
-	bsp_mb_discrete_input_set(0, 1);
-	bsp_mb_discrete_input_set(0, 0);
-	bsp_mb_discrete_input_set(0, 1);
-
-	// Update input register
-	bsp_mb_input_reg_set(0, 1);
-	bsp_mb_input_reg_set(1, 2);
-	bsp_mb_input_reg_set(2, 3);
-	bsp_mb_input_reg_set(3, 4);
-
-	// Update holding register
-	bsp_mb_holding_reg_set(0, 5);
-	bsp_mb_holding_reg_set(1, 6);
-	bsp_mb_holding_reg_set(2, 7);
-	bsp_mb_holding_reg_set(3, 8);
+	modbus_slave_example_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    bsp_mb_slave_handle();
+	while (1)
+	{
+		modbus_slave_example_run();
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
+	}
   /* USER CODE END 3 */
 }
 
@@ -189,11 +168,11 @@ void SystemClock_Config(void)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
+	/* User can add his own implementation to report the HAL error return state */
+	__disable_irq();
+	while (1)
+	{
+	}
   /* USER CODE END Error_Handler_Debug */
 }
 
@@ -208,8 +187,8 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+	/* User can add his own implementation to report the file name and line number,
+	   ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

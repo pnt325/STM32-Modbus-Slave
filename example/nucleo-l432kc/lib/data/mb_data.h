@@ -9,12 +9,13 @@
 #define _MB_DATA_H_
 
 #include <stdint.h>
-
-#include "../../lib/data/mb_data_bit.h"
-#include "../../lib/data/mb_data_reg.h"
+#include <stdbool.h>
+#include "mb_data_bit.h"
+#include "mb_data_reg.h"
 
 typedef struct mb_data_s
 {
+	bool 		  _is_init;		// initialize status
 	mb_data_bit_t coil;			// Coil
 	mb_data_bit_t input;		// Discrete input
 	mb_data_reg_t reg_input;	// Input reg
@@ -22,5 +23,6 @@ typedef struct mb_data_s
 } mb_data_t;
 
 void mb_data_init(mb_data_t* mb_data);
+bool mb_data_is_init(mb_data_t* mb_data);
 
 #endif /* DATA_MB_DATA_H_ */

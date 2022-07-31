@@ -29,4 +29,11 @@ void mb_data_init(mb_data_t* mb_data)
 	mb_data_bit_init(&mb_data->input      , input_db      , MB_INPUT_NUM);
 	mb_data_reg_init(&mb_data->reg_input  , reg_input_db  , MB_REG_INPUT_NUM);
 	mb_data_reg_init(&mb_data->reg_holding, reg_holding_db, MB_REG_HOLDING_NUM);
+
+	mb_data->_is_init = true;
+}
+
+bool mb_data_is_init(mb_data_t* mb_data)
+{
+	return mb_data->_is_init;
 }
