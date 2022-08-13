@@ -59,7 +59,14 @@ mb_return_t mb_slave_init(mb_slave_t* mb, mb_data_t* data, uint8_t sl_addr, uint
 	mb_assert(mb->timer);
 	mb_assert(mb_data_is_init(mb->data));
 
-	mb_log_init();
+#ifdef MB_LOG
+	static bool _is_log_init = false;
+	if (!_is_log_init)
+	{
+		mb_log_init();
+		_is_log_init = true;
+	}
+#endif
 	mb_log("MODBUS init\n");
 	mb_log("Speed: %d\n", speed);
 
@@ -81,7 +88,7 @@ mb_return_t mb_slave_init(mb_slave_t* mb, mb_data_t* data, uint8_t sl_addr, uint
 
 	// Timer configure
 	__HAL_TIM_CLEAR_IT(mb->timer, TIM_IT_UPDATE);						// Clear IRQ pending
-	__HAL_TIM_SET_PRESCALER(mb->timer, (timer_clk_mhz - 1));	// Set timer prescaler
+	__HAL_TIM_SET_PRESCALER(mb->timer, (timer_clk_mhz - 1));			// Set timer prescaler
 	set_timer_period(mb, speed);
 
 	mb->is_init = true;

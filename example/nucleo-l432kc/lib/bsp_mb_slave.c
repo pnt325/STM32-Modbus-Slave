@@ -10,9 +10,10 @@
 #include "mb_slave.h"
 
 /* macro ======================================================*/
-#define BSP_MB_SLAVE_ID				0x01
-#define BSP_MB_SLAVE_SPEED			9600	// bps
-#define BSP_MB_TIMER_CLOCK_SOURCE	80		// Mhz
+#define BSP_MB_SLAVE_ID				(0x01)
+#define BSP_MB_SLAVE_MAIN_SPEED		(9600)	// bps
+#define BSP_MB_SLAVE_HMI_SPEED		(38400)
+#define BSP_MB_TIMER_CLOCK_SOURCE	(80)	// Mhz
 
 /* type =======================================================*/
 typedef enum
@@ -47,8 +48,8 @@ void bsp_mb_slave_init(void) {
 
 	mb_data_init(&__mb_data);
 
-	mb_slave_init(&__slave[BSP_MODBUS_SLAVE_MAIN], &__mb_data, BSP_MB_SLAVE_ID, BSP_MB_SLAVE_SPEED, BSP_MB_TIMER_CLOCK_SOURCE);
-	mb_slave_init(&__slave[BSP_MODBUS_SLAVE_HMI], &__mb_data, BSP_MB_SLAVE_ID, BSP_MB_SLAVE_SPEED, BSP_MB_TIMER_CLOCK_SOURCE);
+	mb_slave_init(&__slave[BSP_MODBUS_SLAVE_MAIN], &__mb_data, BSP_MB_SLAVE_ID, BSP_MB_SLAVE_MAIN_SPEED, BSP_MB_TIMER_CLOCK_SOURCE);
+	mb_slave_init(&__slave[BSP_MODBUS_SLAVE_HMI], &__mb_data, BSP_MB_SLAVE_ID, BSP_MB_SLAVE_HMI_SPEED, BSP_MB_TIMER_CLOCK_SOURCE);
 }
 
 void bsp_mb_slave_handle(void) {
