@@ -57,7 +57,7 @@ mb_return_t mb_slave_init(mb_slave_t* mb, mb_data_t* data, uint8_t sl_addr, uint
 	mb_assert(mb);
 	mb_assert(mb->uart);
 	mb_assert(mb->timer);
-	mb_assert(mb_data_is_init(mb->data));
+	mb_assert(mb_data_is_init(data));
 
 #ifdef MB_LOG
 	static bool _is_log_init = false;
