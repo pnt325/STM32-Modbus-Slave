@@ -54,7 +54,7 @@ void bsp_mb_slave_init(void) {
 
 void bsp_mb_slave_handle(void) {
 	mb_slave_handle(&__slave[BSP_MODBUS_SLAVE_MAIN]);
-	mb_slave_handle(&__slave[BSP_MODBUS_SLAVE_MAIN]);
+	mb_slave_handle(&__slave[BSP_MODBUS_SLAVE_HMI]);
 }
 
 uint8_t bsp_mb_id_get(void) {
