@@ -8,6 +8,7 @@
 #ifndef MB_ASSERT_H_
 #define MB_ASSERT_H_
 
+#include <stdbool.h>
 #include "mb_config.h"
 
 #ifdef MB_DEBUG

@@ -18,13 +18,15 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "crc.h"
+#include "dma.h"
 #include "usart.h"
-#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "../../lib/bsp_mb_slave.h"
+#include "test_lpuart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -87,12 +89,12 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_TIM2_Init();
-  MX_TIM7_Init();
+  MX_DMA_Init();
   MX_USART1_UART_Init();
-  MX_LPUART1_UART_Init();
+  MX_CRC_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-	modbus_slave_example_init();
+  modbus_slave_example_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */

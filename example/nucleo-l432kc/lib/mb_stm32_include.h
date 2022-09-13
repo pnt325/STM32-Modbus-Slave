@@ -9,7 +9,5 @@
 #define MB_STM32_INCLUDE_H_
 
 #include "stm32l4xx_hal.h"
-#include "stm32l4xx_hal_uart.h"
-#include "stm32l4xx_hal_tim.h"
 
 #endif /* MB_STM32_INCLUDE_H_ */

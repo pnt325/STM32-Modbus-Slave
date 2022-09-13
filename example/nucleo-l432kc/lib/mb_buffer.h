@@ -29,8 +29,8 @@ typedef struct mb_buffer_t {
 	mb_pdu_t __data[MB_BUFFER_SIZE];					// Data array
 
 	/* Handle function */
-	mb_pdu_t* (*next)(struct mb_buffer_t* buf);		    // Get pointer to next data on buffer
-	void      (*commit_next)(struct mb_buffer_t* buf);	// Commit next data is set
+	uint8_t*  (*next)(struct mb_buffer_t* buf);		    // Get pointer to next data on buffer
+	void      (*commit_next)(struct mb_buffer_t* buf, uint16_t len);	// Commit next data is set
 
 	mb_pdu_t* (*get_data)(struct mb_buffer_t* buf);		// Get pointer of data in buffer
 	void      (*commit_get)(struct mb_buffer_t* buf);	// Commit data get out of buffer
