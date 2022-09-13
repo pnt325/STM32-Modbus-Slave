@@ -35,5 +35,6 @@ void mb_data_init(mb_data_t* mb_data)
 
 bool mb_data_is_init(mb_data_t* mb_data)
 {
+	mb_assert(mb_data);
 	return mb_data->_is_init;
 }

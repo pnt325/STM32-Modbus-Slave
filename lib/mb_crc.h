@@ -9,7 +9,8 @@
 #define MB_CRC_H_
 
 #include <stdint.h>
+#include "mb_port.h"
 
-uint16_t mb_crc_calc(uint8_t* data, uint16_t len);
+#define  mb_crc_calc    mb_port_crc_calc
 
 #endif /* MB_CRC_H_ */
