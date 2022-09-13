@@ -8,22 +8,7 @@ Lib source path: `lib`
 
 ## Configure for STM32 using CubeMX
 
-### 1. Timer
-Configure timer clock source and enable global interrupt as bellow:
-
-![](docs/image/cube_timer.png)
-
-```
-NOTE: If using the internal clock should check clock source from datasheet,
-the value will be use configure for modbus lib
-```
-
-![](docs/image/timer_clock_source.png)
-
-In this project use timer 3 with clock source from APB1
-
-
-### 2. UART
+### 1. UART
 
 Choose UART and enable global interrupt as bellow:
 
@@ -33,7 +18,7 @@ Note: The modbus lib implement the get data using interrupt and ring-buffer
 it has limit of speed over UART to make sure it's working well the limit 
 of speed is `115200`
 
-### 3. Copy modbus source from `lib` to your project, like bellow:
+### 2. Copy modbus source from `lib` to your project, like bellow:
 
 ![](docs/image/modbus_lib.png)
 
