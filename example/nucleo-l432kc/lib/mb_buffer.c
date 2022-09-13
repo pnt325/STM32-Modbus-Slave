@@ -9,8 +9,8 @@
 #include "mb_assert.h"
 #include "mb_log.h"
 
-static mb_pdu_t* _next(mb_buffer_t *buf);
-static void      _commit_next(mb_buffer_t *buf);
+static uint8_t* _next(mb_buffer_t *buf);
+static void      _commit_next(mb_buffer_t *buf, uint16_t );
 static mb_pdu_t* _get_data(mb_buffer_t *buf);
 static void      _commit_get(mb_buffer_t *buf);
 static void      _flush(mb_buffer_t *buf);
@@ -30,17 +30,18 @@ void mb_buffer_init(mb_buffer_t *buf) {
 	buf->available   = _available;
 }
 
-static mb_pdu_t* _next(mb_buffer_t *buf) {
+static uint8_t* _next(mb_buffer_t *buf) {
 	mb_assert(buf);
-	return &buf->__data[buf->__head];
+	return buf->__data[buf->__head].data;
 }
 
-static void _commit_next(mb_buffer_t *buf) {
+static void _commit_next(mb_buffer_t *buf, uint16_t len) {
 	mb_assert(buf);
 	if (buf->__available >= MB_BUFFER_SIZE) {
 		mb_log("MB buffer overflow\n");
 		return;
 	} else {
+		buf->__data[buf->__head].len = len;
 		buf->__head = (buf->__head + 1) % MB_BUFFER_SIZE;
 		buf->__available++;
 	}

@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "cstdint": "c",
+        "mb_assert.h": "c",
+        "mb_config.h": "c"
+    }
+}
