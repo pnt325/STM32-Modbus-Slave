@@ -527,7 +527,7 @@ static uint8_t fc_read_input(mb_slave_t *mb, mb_pdu_t *pdu)
 	}
 
 	uint16_t addr = mb_get_addr_qty(pdu, MB_PDU_ADDR_HI);  // get_u16_val(pdu, MB_PDU_ADDR_HI);;
-	uint16_t qty  = mb_get_addr_qty(pdu, MB_PDU_QTY_LO);   // get_u16_val(pdu, MB_PDU_QTY_HI);
+	uint16_t qty  = mb_get_addr_qty(pdu, MB_PDU_QTY_HI);   // get_u16_val(pdu, MB_PDU_QTY_HI);
 
 	/**
 	 * Response data
