@@ -129,9 +129,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    HAL_I2CEx_EnableFastModePlus(I2C_FASTMODEPLUS_PB6);
+    __HAL_SYSCFG_FASTMODEPLUS_ENABLE(I2C_FASTMODEPLUS_PB6);
 
-    HAL_I2CEx_EnableFastModePlus(I2C_FASTMODEPLUS_PB7);
+    __HAL_SYSCFG_FASTMODEPLUS_ENABLE(I2C_FASTMODEPLUS_PB7);
 
     /* USART1 DMA Init */
     /* USART1_RX Init */

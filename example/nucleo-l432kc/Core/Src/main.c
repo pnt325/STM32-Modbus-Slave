@@ -20,6 +20,7 @@
 #include "main.h"
 #include "crc.h"
 #include "dma.h"
+#include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -27,6 +28,8 @@
 /* USER CODE BEGIN Includes */
 #include "../../lib/bsp_mb_slave.h"
 #include "test_lpuart.h"
+#include "../../FM24W256/fm24w256.h"
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,6 +62,7 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 extern void modbus_slave_example_init(void);
 extern void modbus_slave_example_run(void);
+//static void test_i2c(void);
 /* USER CODE END 0 */
 
 /**
@@ -93,15 +97,17 @@ int main(void)
   MX_USART1_UART_Init();
   MX_CRC_Init();
   MX_USART2_UART_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  modbus_slave_example_init();
+//  modbus_slave_example_init();
+  fm24w256_example();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1)
 	{
-		modbus_slave_example_run();
+//		modbus_slave_example_run();
 
     /* USER CODE END WHILE */
 

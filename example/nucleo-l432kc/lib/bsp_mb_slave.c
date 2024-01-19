@@ -112,8 +112,8 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
-	__disable_irq();
-	while(1);
+//	__disable_irq();
+//	while(1);
 }
 
 void mb_port_start_recv(void* uart, uint8_t* buf, uint16_t buf_size)
